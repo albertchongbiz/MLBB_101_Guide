@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLBB Parent & Beginner Companion (v1.04)</title>
+    <title>MLBB Parent & Beginner Companion (v1.05)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -64,7 +64,7 @@
                 <span class="text-xl font-black text-white">R</span>
             </div>
             <div>
-                <h1 class="font-bold text-base leading-tight tracking-wide text-white">Parent & Beginner Hub <span class="text-[10px] text-indigo-400 bg-indigo-500/20 px-1.5 py-0.5 rounded ml-1">v1.04</span></h1>
+                <h1 class="font-bold text-base leading-tight tracking-wide text-white">Parent & Beginner Hub <span class="text-[10px] text-indigo-400 bg-indigo-500/20 px-1.5 py-0.5 rounded ml-1">v1.05</span></h1>
                 <p class="text-xs text-indigo-300 font-medium">MPL & M-Series Companion</p>
             </div>
         </div>
@@ -78,26 +78,26 @@
     <!-- Main Container -->
     <main class="max-w-md mx-auto px-4 pt-4 pb-8 space-y-6">
 
-        <!-- TAB 1: HOME / REAL MAP & OVERVIEW -->
+        <!-- TAB 1: HOME / 3D MAP & OVERVIEW -->
         <section id="tab-home" class="tab-content space-y-5">
             <!-- Hero Welcome Card -->
             <div class="glass rounded-2xl p-5 relative overflow-hidden shadow-xl bg-gradient-to-br from-indigo-950/60 via-slate-900/80 to-purple-950/40">
                 <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-600/20 rounded-full blur-2xl"></div>
                 <div class="relative z-10">
-                    <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Tactical Map Hub (v1.04)</span>
-                    <h2 class="text-xl font-extrabold text-white mt-1">Land of Dawn: Real Visual Map</h2>
+                    <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Tactical Map Hub (v1.05)</span>
+                    <h2 class="text-xl font-extrabold text-white mt-1">Land of Dawn: 3D Isometric Map</h2>
                     <p class="text-sm text-slate-300 mt-2 leading-relaxed">
                         Tap the tactical toggles below to reveal exact lane paths with directional flow, buff camps, turrets, crystals, and minion routes!
                     </p>
                 </div>
             </div>
 
-            <!-- Real Map Tactical Widget -->
+            <!-- 3D Map Tactical Widget -->
             <div class="glass rounded-2xl p-4 shadow-xl space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="font-bold text-sm text-white flex items-center space-x-2">
                         <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-                        <span>Interactive Tactical Overlay</span>
+                        <span>Interactive 3D Tactical Overlay</span>
                     </h3>
                     <span class="text-xs text-indigo-300 font-medium">Toggle layers 👇</span>
                 </div>
@@ -112,10 +112,10 @@
                     <button onclick="toggleLayer('minions')" id="btn-minions" class="py-1.5 px-2 rounded-lg bg-slate-800 text-slate-300 font-bold transition">🛡️ Minions</button>
                 </div>
 
-                <!-- Map Container with Real Map Background & SVG Overlay -->
+                <!-- Map Container with 3D Map Image & SVG Overlay -->
                 <div class="relative w-full aspect-[1/1] rounded-xl overflow-hidden border border-slate-800 shadow-inner bg-slate-950 flex items-center justify-center">
-                    <!-- Background Real Map Image -->
-                    <img src="1000433048.jpg" alt="Land of Dawn Real Map" class="absolute inset-0 w-full h-full object-cover opacity-90">
+                    <!-- Background 3D Isometric Map Image -->
+                    <img src="1000433062.webp" alt="Land of Dawn 3D Map" class="absolute inset-0 w-full h-full object-cover opacity-95">
                     
                     <!-- SVG Overlay for Tactical Items -->
                     <svg viewBox="0 0 500 500" class="absolute inset-0 w-full h-full pointer-events-none z-10">
@@ -127,58 +127,58 @@
 
                         <!-- 1. LANES WITH DIRECTIONAL ARROWS -->
                         <g id="layer-lanes">
-                            <path d="M 90,410 L 90,95 L 405,95" fill="none" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                            <path d="M 90,410 L 250,250 L 410,90" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                            <path d="M 90,410 L 410,410 L 410,90" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                            <path d="M 115,395 L 115,115 L 390,115" fill="none" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                            <path d="M 115,395 L 250,250 L 395,110" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                            <path d="M 115,395 L 395,395 L 395,110" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
                         </g>
 
                         <!-- 2. BUFF LOCATIONS -->
                         <g id="layer-buffs" class="hidden">
-                            <circle cx="160" cy="330" r="14" fill="#a855f7" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="160" y="334" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
-                            <circle cx="340" cy="170" r="14" fill="#a855f7" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="340" y="174" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
-                            <circle cx="140" cy="180" r="14" fill="#f97316" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="140" y="184" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
-                            <circle cx="360" cy="320" r="14" fill="#f97316" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="360" y="324" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
+                            <circle cx="170" cy="320" r="14" fill="#a855f7" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
+                            <text x="170" y="324" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
+                            <circle cx="330" cy="180" r="14" fill="#a855f7" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
+                            <text x="330" y="184" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
+                            <circle cx="150" cy="190" r="14" fill="#f97316" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
+                            <text x="150" y="194" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
+                            <circle cx="350" cy="310" r="14" fill="#f97316" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
+                            <text x="350" y="314" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
                         </g>
 
                         <!-- 3. TURRETS -->
                         <g id="layer-turrets" class="hidden">
-                            <rect x="90" y="350" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="90" y="250" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="150" y="410" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="250" y="410" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="170" y="350" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="395" y="140" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="395" y="240" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="330" y="80" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="230" y="80" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="310" y="160" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="115" y="340" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="115" y="240" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="170" y="395" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="270" y="395" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="190" y="330" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="380" y="150" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="380" y="250" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="320" y="105" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="220" y="105" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="300" y="180" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
                         </g>
 
                         <!-- 4. CRYSTALS -->
                         <g id="layer-crystals" class="hidden">
-                            <polygon points="90,410 75,430 105,430" fill="#3b82f6" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="90" y="445" font-size="9" fill="#93c5fd" font-weight="bold" text-anchor="middle">Crystal</text>
-                            <polygon points="410,95 395,75 425,75" fill="#ef4444" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="410" y="65" font-size="9" fill="#fca5a5" font-weight="bold" text-anchor="middle">Crystal</text>
+                            <polygon points="115,395 100,415 130,415" fill="#3b82f6" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
+                            <text x="115" y="430" font-size="9" fill="#93c5fd" font-weight="bold" text-anchor="middle">Crystal</text>
+                            <polygon points="395,110 380,90 410,90" fill="#ef4444" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
+                            <text x="395" y="80" font-size="9" fill="#fca5a5" font-weight="bold" text-anchor="middle">Crystal</text>
                         </g>
 
                         <!-- 5. LORD & TURTLE -->
                         <g id="layer-lord" class="hidden">
-                            <circle cx="180" cy="160" r="16" fill="#10b981" fill-opacity="0.9" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="180" y="164" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Turtle</text>
+                            <circle cx="185" cy="170" r="16" fill="#10b981" fill-opacity="0.9" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
+                            <text x="185" y="174" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Turtle</text>
                             <circle cx="250" cy="250" r="18" fill="#eab308" fill-opacity="0.9" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
                             <text x="250" y="254" font-size="8" fill="#000" font-weight="bold" text-anchor="middle">Lord</text>
                         </g>
 
                         <!-- 6. MINIONS -->
                         <g id="layer-minions" class="hidden">
-                            <path d="M 95,400 L 95,100 L 395,100" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
-                            <path d="M 95,400 L 245,245 L 395,100" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
-                            <path d="M 95,400 L 400,400 L 400,105" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
+                            <path d="M 120,385 L 120,120 L 385,120" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
+                            <path d="M 120,385 L 245,245 L 385,120" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
+                            <path d="M 120,385 L 390,385 L 390,125" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
                         </g>
                     </svg>
                 </div>
@@ -222,7 +222,7 @@
             <div class="glass rounded-2xl p-5 space-y-3 border border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-slate-900/80 to-slate-950">
                 <div class="flex items-center space-x-2">
                     <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.92 3 1.732 3z"></path></svg>
-                    <h3 class="text-base font-bold text-amber-300">Legal Liability & Terms of Service (T&C) [v1.04]</h3>
+                    <h3 class="text-base font-bold text-amber-300">Legal Liability & Terms of Service (T&C) [v1.05]</h3>
                 </div>
                 <p class="text-xs text-slate-300 leading-relaxed">
                     As a digital companion application providing educational esports guides, proper Terms & Conditions (T&C) and Disclaimers are crucial before public launch to protect against legal liability.
@@ -236,11 +236,11 @@
             </div>
         </section>
 
-        <!-- TAB 3: SPECTATOR CHEAT SHEET (v1.04 with Expanded Jargon) -->
+        <!-- TAB 3: SPECTATOR CHEAT SHEET (v1.05 with Role Filters, Timing Filters & All Heroes) -->
         <section id="tab-cheatsheet" class="tab-content hidden space-y-4">
             <div class="glass rounded-2xl p-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-sm text-white">Full Hero Roster & Caster Jargon (v1.04)</h3>
+                    <h3 class="font-bold text-sm text-white">Full Hero Roster & Caster Jargon (v1.05)</h3>
                     <span id="hero-count-badge" class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-500/30 font-semibold">68 Heroes</span>
                 </div>
                 
@@ -296,7 +296,7 @@
                 </div>
                 <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-1 text-xs">
                     <div class="bg-indigo-950/50 p-3 rounded-xl border border-indigo-500/20 text-indigo-200">
-                        👋 Hello! I am your ELIF AI assistant (v1.04). Ask me anything about MLBB matches, players, or parent guidance!
+                        👋 Hello! I am your ELIF AI assistant (v1.05). Ask me anything about MLBB matches, players, or parent guidance!
                     </div>
                 </div>
                 <div class="flex space-x-2 pt-2 border-t border-slate-800">
@@ -313,7 +313,7 @@
     <nav class="glass fixed bottom-0 left-0 right-0 z-50 px-4 py-2.5 border-t border-slate-800 flex justify-around max-w-md mx-auto">
         <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-indigo-400 space-y-0.5 transition">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="text-[10px] font-bold">Real Map</span>
+            <span class="text-[10px] font-bold">3D Map</span>
         </button>
         <button onclick="switchTab('career')" id="nav-career" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 space-y-0.5 transition">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -332,7 +332,7 @@
     <!-- JavaScript Logic -->
     <script>
         const layerInfo = {
-            lanes: "🧭 Lane Paths Active: Showing directional flow arrows from Point 1 to Point 2 across Gold, Mid, and EXP lanes.",
+            lanes: "🧭 Lane Paths Active: Showing directional flow arrows across Gold, Mid, and EXP lanes on the 3D map.",
             buffs: "🔥 Buff Camps Active: Pinpointing exact locations of purple (energy/mana) and orange (attack/EXP) buff monsters.",
             turrets: "🏛️ Turrets Active: Highlighting defensive tower placements guarding all three main lanes.",
             crystals: "💎 Crystals Active: Pointing out the core base crystals (destroying this wins the match).",
@@ -419,7 +419,7 @@
             ["Minotaur", "Roamer", "Mid", "Minoan Fury", "Rage meter filling up to unleash multi-stage airborne knockups.", "Crowd Control / Tank"],
             ["Nolan", "Jungler", "Early", "Fracture / Rift", "Tracks dimensional rift slash pathing and energy reset dashes.", "Assassin / Mobility"],
             ["Novaria", "Mid", "Late", "Astral Recall", "Long-range sniper projectile impact and global enemy vision reveal.", "Long-Range Poke"],
-            ["Odette", "Mid", "Late", "Swan Song", "Channeling area-of-effect ultimate positioning with freeze setup.", "Late Game", "AOE Teamfight Burst"],
+            ["Odette", "Mid", "Late", "Swan Song", "Channeling area-of-effect ultimate positioning with freeze setup.", "AOE Teamfight Burst"],
             ["Paquito", "EXP", "Early", "Knockout Strike", "Tracks Heavy Left Punch stack generation and devastating combos.", "Burst Bruiser"],
             ["Pharsa", "Mid", "Mid", "Feathered Airstrike", "Long-range artillery bombardment zones forcing enemy displacement.", "Long-Range Artillery"],
             ["Phoveus", "EXP", "Mid", "Demonic Force", "Blinks and dashes triggered on enemy team; punishes mobility.", "Anti-Dash / Slam"],
@@ -561,7 +561,7 @@
             input.value = '';
             chatMessages.scrollTop = chatMessages.scrollHeight;
             setTimeout(() => {
-                chatMessages.innerHTML += `<div class="flex justify-start"><div class="bg-slate-900 border border-slate-800 text-slate-200 p-3 rounded-xl max-w-[85%] text-xs shadow-md space-y-1"><span class="font-bold text-indigo-400 block text-[10px]">ELIF AI Assistant (v1.04)</span><p>In MLBB tactical gameplay, role synergy and timing control win championships!</p></div></div>`;
+                chatMessages.innerHTML += `<div class="flex justify-start"><div class="bg-slate-900 border border-slate-800 text-slate-200 p-3 rounded-xl max-w-[85%] text-xs shadow-md space-y-1"><span class="font-bold text-indigo-400 block text-[10px]">ELIF AI Assistant (v1.05)</span><p>In MLBB tactical gameplay, role synergy and timing control win championships!</p></div></div>`;
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }, 600);
         }
