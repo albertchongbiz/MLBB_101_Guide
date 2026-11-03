@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MLBB Parent & Beginner Companion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#0b0f19',
+                        cardbg: '#131c31',
+                        accent: '#6366f1',
+                        accentglow: '#818cf8',
+                        gold: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(19, 28, 49, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glow-pulse {
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes pulseGlow {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.8)); }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-24">
+
+    <!-- Top App Header -->
+    <header class="glass sticky top-0 z-50 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                <span class="text-xl font-black text-white">R</span>
+            </div>
+            <div>
+                <h1 class="font-bold text-base leading-tight tracking-wide text-white">Parent & Beginner Hub</h1>
+                <p class="text-xs text-indigo-300 font-medium">MPL & M-Series Companion</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live M8 Ready
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-md mx-auto px-4 pt-4 pb-8 space-y-6">
+
+        <!-- TAB 1: HOME / VISUAL MAP & OVERVIEW -->
+        <section id="tab-home" class="tab-content space-y-5">
+            <!-- Hero Welcome Card -->
+            <div class="glass rounded-2xl p-5 relative overflow-hidden shadow-xl bg-gradient-to-br from-indigo-950/60 via-slate-900/80 to-purple-950/40">
+                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-600/20 rounded-full blur-2xl"></div>
+                <div class="relative z-10">
+                    <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Demystifying Esports</span>
+                    <h2 class="text-xl font-extrabold text-white mt-1">Understanding Your Child's Pro Journey</h2>
+                    <p class="text-sm text-slate-300 mt-2 leading-relaxed">
+                        Welcome! Tap any lane or objective on the map below to highlight its exact path from base to base and see parent-friendly explanations.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Interactive Tactical Map Widget with Full Path Highlighting -->
+            <div class="glass rounded-2xl p-4 shadow-xl">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                        <span>Interactive Land of Dawn Map</span>
+                    </h3>
+                    <span class="text-xs text-indigo-300 font-medium">Tap nodes 👇</span>
+                </div>
+
+                <!-- Tactical SVG Map Container -->
+                <div class="relative w-full aspect-[4/3] bg-slate-950/90 rounded-xl overflow-hidden border border-slate-800 shadow-inner flex items-center justify-center p-2">
+                    <svg viewBox="0 0 400 300" class="w-full h-full drop-shadow-md">
+                        <!-- Background Field Base -->
+                        <rect x="25" y="25" width="350" height="250" rx="14" fill="#0b0f19" stroke="#1e293b" stroke-width="3"/>
+                        
+                        <!-- River Path (Default) -->
+                        <path d="M 80,240 Q 200,150 320,60" fill="none" stroke="#0ea5e9" stroke-width="12" stroke-opacity="0.25" stroke-linecap="round"/>
+
+                        <!-- LANES (Highlightable) -->
+                        <!-- 1. Gold Lane (Top/Left Border line) -->
+                        <path id="path-gold" d="M 70,220 L 70,70 L 320,70" fill="none" stroke="#f59e0b" stroke-width="4" stroke-opacity="0.3" stroke-linecap="round" class="transition-all duration-300"/>
+                        
+                        <!-- 2. EXP Lane (Bottom/Right Border line) -->
+                        <path id="path-exp" d="M 70,220 L 330,220 L 330,70" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-opacity="0.3" stroke-linecap="round" class="transition-all duration-300"/>
+
+                        <!-- 3. Mid Lane (Diagonal Center Highway) -->
+                        <path id="path-mid" d="M 70,220 L 200,150 L 330,70" fill="none" stroke="#ec4899" stroke-width="4" stroke-opacity="0.3" stroke-linecap="round" class="transition-all duration-300"/>
+
+                        <!-- 4. Objective Path (Turtle & Lord Pit) -->
+                        <path id="path-objective" d="M 120,200 Q 200,150 280,100" fill="none" stroke="#10b981" stroke-width="4" stroke-opacity="0.3" stroke-linecap="round" class="transition-all duration-300"/>
+
+                        <!-- Blue Base (Bottom Left) -->
+                        <circle cx="70" cy="220" r="20" fill="#3b82f6" fill-opacity="0.4" stroke="#60a5fa" stroke-width="2"/>
+                        <text x="70" y="224" font-size="9" fill="#ffffff" font-weight="bold" text-anchor="middle">Blue Base</text>
+
+                        <!-- Red Base (Top Right) -->
+                        <circle cx="330" cy="70" r="20" fill="#ef4444" fill-opacity="0.4" stroke="#f87171" stroke-width="2"/>
+                        <text x="330" y="74" font-size="9" fill="#ffffff" font-weight="bold" text-anchor="middle">Red Base</text>
+
+                        <!-- Clickable Nodes -->
+                        <!-- Gold Lane Node -->
+                        <g class="cursor-pointer group" onclick="highlightLane('gold')">
+                            <circle cx="195" cy="70" r="14" fill="#f59e0b" class="glow-pulse"/>
+                            <text x="195" y="96" font-size="9" fill="#fde047" font-weight="bold" text-anchor="middle">Gold Lane</text>
+                        </g>
+
+                        <!-- Objective Node -->
+                        <g class="cursor-pointer group" onclick="highlightLane('objective')">
+                            <circle cx="200" cy="150" r="15" fill="#10b981" class="glow-pulse"/>
+                            <text x="200" y="175" font-size="9" fill="#a7f3d0" font-weight="bold" text-anchor="middle">Turtle / Lord</text>
+                        </g>
+
+                        <!-- EXP Lane Node -->
+                        <g class="cursor-pointer group" onclick="highlightLane('exp')">
+                            <circle cx="200" cy="220" r="14" fill="#8b5cf6" class="glow-pulse"/>
+                            <text x="200" y="244" font-size="9" fill="#c4b5fd" font-weight="bold" text-anchor="middle">EXP Lane</text>
+                        </g>
+
+                        <!-- Mid Lane Node -->
+                        <g class="cursor-pointer group" onclick="highlightLane('mid')">
+                            <circle cx="200" cy="115" r="14" fill="#ec4899" class="glow-pulse"/>
+                            <text x="200" y="139" font-size="9" fill="#fbcfe8" font-weight="bold" text-anchor="middle">Mid Lane</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Interactive Map Info Box -->
+                <div id="map-info-box" class="mt-3 p-3 rounded-xl bg-slate-900/90 border border-indigo-500/30 text-xs text-slate-200">
+                    <span class="font-bold text-indigo-400 block mb-1">🗺️ Click any lane node above to highlight its full path!</span>
+                    See the entire route from Blue Base to Red Base, sports analogies, and what players do there.
+                </div>
+            </div>
+
+            <!-- Quick Sports Analogy Guide -->
+            <div class="glass rounded-2xl p-4 space-y-3">
+                <h3 class="font-bold text-sm text-white flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    <span>MLBB translated to Traditional Sports</span>
+                </h3>
+                <div class="grid grid-cols-2 gap-2.5">
+                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold text-indigo-400 block">The Match Objective</span>
+                        <p class="text-xs text-slate-300 mt-0.5">Like scoring a goal in football: destroy the enemy base crystal to win.</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold text-indigo-400 block">Retribution Spell</span>
+                        <p class="text-xs text-slate-300 mt-0.5">Like a penalty kick save; securing the neutral boss at the exact millisecond.</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold text-indigo-400 block">Team Roles (5 Players)</span>
+                        <p class="text-xs text-slate-300 mt-0.5">Striker (Carry), Playmaker (Mage), Bodyguard (Tank/Roam), Winger (EXP).</p>
+                    </div>
+                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
+                        <span class="text-xs font-bold text-indigo-400 block">The 18-Min Lord</span>
+                        <p class="text-xs text-slate-300 mt-0.5">Sudden death overtime boss; whoever slays it gets an unstoppable battering ram.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: TOURNAMENT, CAREER & ABOUT -->
+        <section id="tab-career" class="tab-content hidden space-y-5">
+            <div class="glass rounded-2xl p-5 space-y-3">
+                <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Background & History</span>
+                <h3 class="text-base font-bold text-white">How Mobile Legends (MLBB) Began</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Launched in <strong class="text-white">2016</strong> by Moonton, MLBB was built to bring the deep strategy of PC multiplayer online battle arena (MOBA) games directly to smartphones. Because smartphones are widely accessible across Southeast Asia, it exploded into a cultural phenomenon in Malaysia, Indonesia, and the Philippines.
+                </p>
+                <div class="bg-indigo-950/40 p-3 rounded-xl border border-indigo-500/20 text-xs text-indigo-200">
+                    <strong class="text-white block mb-1">🎮 From Casual Play to Global Pro Careers</strong>
+                    What started as a mobile game evolved into structured leagues like the <strong>MPL (Mobile Legends Professional League)</strong> and international world championships (like M8 in Turkey), transforming talented young players into professional athletes with salaries, bootcamps, and global careers.
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-5 space-y-3">
+                <h3 class="text-base font-bold text-white flex items-center space-x-2">
+                    <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    <span>The Roadmap to the World Stage</span>
+                </h3>
+                <div class="space-y-2.5">
+                    <div class="flex items-start space-x-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                        <div class="w-7 h-7 rounded-lg bg-indigo-600/30 text-indigo-400 flex items-center justify-center font-bold text-xs shrink-0">1</div>
+                        <div>
+                            <span class="text-xs font-bold text-white block">Regional Leagues (MPL MY / ID / PH)</span>
+                            <span class="text-xs text-slate-400">Local seasonal battles where teams fight for national glory and prize pools.</span>
+                        </div>
+                    </div>
+                    <div class="flex items-start space-x-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                        <div class="w-7 h-7 rounded-lg bg-gold/20 text-gold flex items-center justify-center font-bold text-xs shrink-0">2</div>
+                        <div>
+                            <span class="text-xs font-bold text-white block">International Majors & M-Series (M8 Turkey)</span>
+                            <span class="text-xs text-slate-400">The pinnacle of esports. Top regional teams fly to global arenas representing their country.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- T&C / Legal Liability Disclaimer Section (Added per your standard development workflow rule) -->
+            <div class="glass rounded-2xl p-5 space-y-3 border border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-slate-900/80 to-slate-950">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.92 3 1.732 3z"></path></svg>
+                    <h3 class="text-base font-bold text-amber-300">Legal Liability & Terms of Service (T&C)</h3>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    As a digital companion application providing educational esports guides, tournament schedules, and AI-driven general summaries, proper Terms & Conditions (T&C) and Disclaimers are crucial before public launch to protect against legal liability.
+                </p>
+                <div class="space-y-2 pt-1">
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">
+                        <strong class="text-amber-400 block mb-1">1. Intellectual Property & Disclaimer</strong>
+                        <p class="text-slate-400">Mobile Legends: Bang Bang (MLBB), hero names, and tournament assets are trademarks of Moonton. This app is an independent educational companion created for fans and parents, not officially affiliated with Moonton or MPL.</p>
+                    </div>
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">
+                        <strong class="text-amber-400 block mb-1">2. Limitation of Liability</strong>
+                        <p class="text-slate-400">The AI assistant and cheat sheets are provided for informational and entertainment purposes. We disclaim liability for any reliance placed on match predictions, stats, or live scores.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl p-5 space-y-3">
+                <h3 class="text-base font-bold text-white">Parent FAQ & Realities</h3>
+                <div class="space-y-2 text-xs text-slate-300">
+                    <details class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                        <summary class="font-bold text-white cursor-pointer">Is professional esports a stable career?</summary>
+                        <p class="mt-2 text-slate-300 leading-relaxed">Yes! Modern pro teams provide formal contracts, salaries, housing (bootcamps), coaching staff, physical wellness training, and media training.</p>
+                    </details>
+                    <details class="bg-slate-900/60 p-3 rounded-xl border border-slate-800">
+                        <summary class="font-bold text-white cursor-pointer">What do players do during training?</summary>
+                        <p class="mt-2 text-slate-300 leading-relaxed">It is rigorous like any professional sport: 8+ hours daily of strategic scrimmages, draft analysis, physical exercise, and team communication reviews.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: SPECTATOR CHEAT SHEET -->
+        <section id="tab-cheatsheet" class="tab-content hidden space-y-4">
+            <div class="glass rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-sm text-white">Live Spectator Cheat Sheet</h3>
+                    <span id="hero-count-badge" class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-500/30 font-semibold">68 Heroes</span>
+                </div>
+                <div class="relative">
+                    <input type="text" id="cheat-search" oninput="filterCheatSheet()" placeholder="Search hero (e.g. Chou, Claude, Lylia) or term..." 
+                        class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    <span class="absolute right-3 top-3 text-slate-500 text-xs">🔍</span>
+                </div>
+            </div>
+
+            <div class="flex space-x-2">
+                <button onclick="setCheatTab('heroes')" id="btn-filter-heroes" class="flex-1 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-md transition">Heroes (68)</button>
+                <button onclick="setCheatTab('jargon')" id="btn-filter-jargon" class="flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-400 hover:text-white transition">Caster Jargon</button>
+            </div>
+
+            <div id="cheat-list-container" class="space-y-2.5 max-h-[55vh] overflow-y-auto pr-1"></div>
+        </section>
+
+        <!-- TAB 4: ELIF AI ASSISTANT -->
+        <section id="tab-ai" class="tab-content hidden space-y-4">
+            <div class="glass rounded-2xl p-4 space-y-3 flex flex-col h-[70vh]">
+                <div class="flex items-center space-x-3 pb-3 border-b border-slate-800">
+                    <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">AI</div>
+                    <div>
+                        <h3 class="font-bold text-xs text-white">ELIF (Explain Like I'm 5) Assistant</h3>
+                        <span class="text-[10px] text-emerald-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> Web-search enabled for players & live scores</span>
+                    </div>
+                </div>
+
+                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-1 text-xs">
+                    <div class="bg-indigo-950/50 p-3 rounded-xl border border-indigo-500/20 text-indigo-200">
+                        👋 Hello! I am your ELIF AI assistant. Ask me anything about MLBB matches, players (like K1NGKONG), tournament scores, or parent guidance in plain English!
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-1.5 pt-1">
+                    <button onclick="sendPresetPrompt('Who is K1NGKONG pro player?')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg text-[10px] transition">Who is K1NGKONG?</button>
+                    <button onclick="sendPresetPrompt('What does 2nd place in MPL mean?')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg text-[10px] transition">What does 2nd place mean?</button>
+                    <button onclick="sendPresetPrompt('Explain Lord objective simply')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1 rounded-lg text-[10px] transition">Explain Lord objective</button>
+                </div>
+
+                <div class="flex space-x-2 pt-2 border-t border-slate-800">
+                    <input type="text" id="chat-input" onkeypress="handleChatKeyPress(event)" placeholder="Ask a question..." 
+                        class="flex-1 bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
+                    <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow-md shadow-indigo-600/30">Send</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="glass fixed bottom-0 left-0 right-0 z-50 px-4 py-2.5 border-t border-slate-800 flex justify-around max-w-md mx-auto">
+        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-indigo-400 space-y-0.5 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            <span class="text-[10px] font-bold">Map & 101</span>
+        </button>
+        <button onclick="switchTab('career')" id="nav-career" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 space-y-0.5 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            <span class="text-[10px] font-bold">About / Origin</span>
+        </button>
+        <button onclick="switchTab('cheatsheet')" id="nav-cheatsheet" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 space-y-0.5 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path></svg>
+            <span class="text-[10px] font-bold">Cheat Sheet</span>
+        </button>
+        <button onclick="switchTab('ai')" id="nav-ai" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 space-y-0.5 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+            <span class="text-[10px] font-bold">ELIF AI</span>
+        </button>
+    </nav>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const mapData = {
+            gold: {
+                title: "🪙 Gold Lane Path (Blue Base ➔ Red Base)",
+                sports: "Like a striker waiting for scoring opportunities.",
+                desc: "The Gold Lane runs along the top/left perimeter connecting both bases. This is where the Marksman farms gold safely. When clicked, you can see the full path from start (Blue Base) to end point (Red Base)!"
+            },
+            objective: {
+                title: "🐢 Turtle & 👑 Lord Objective Path",
+                sports: "Like winning a quarter-final point (Turtle) or scoring a penalty goal (Lord).",
+                desc: "Located in the river path between both bases. Spawns neutral bosses that grant gold, shields, and an unstoppable push down lanes."
+            },
+            exp: {
+                title: "🛡️ EXP Lane Path (Blue Base ➔ Red Base)",
+                sports: "Like a physical winger holding the defensive line.",
+                desc: "The EXP Lane runs along the bottom/right perimeter. Durable Fighters duel here 1v1 to level up quickly and anchor the frontline."
+            },
+            mid: {
+                title: "🔮 Mid Lane Highway (Blue Base ➔ Red Base)",
+                sports: "Like a central midfield playmaker.",
+                desc: "The direct diagonal highway connecting Blue Base directly to Red Base. Mages control this center area to clear waves fast and roam."
+            }
+        };
+
+        function highlightLane(laneKey) {
+            // Reset all path opacities & stroke widths
+            document.getElementById('path-gold').setAttribute('stroke-opacity', '0.2');
+            document.getElementById('path-gold').setAttribute('stroke-width', '4');
+            document.getElementById('path-exp').setAttribute('stroke-opacity', '0.2');
+            document.getElementById('path-exp').setAttribute('stroke-width', '4');
+            document.getElementById('path-mid').setAttribute('stroke-opacity', '0.2');
+            document.getElementById('path-mid').setAttribute('stroke-width', '4');
+            document.getElementById('path-objective').setAttribute('stroke-opacity', '0.2');
+            document.getElementById('path-objective').setAttribute('stroke-width', '4');
+
+            // Highlight selected path
+            const activePath = document.getElementById(`path-${laneKey}`);
+            activePath.setAttribute('stroke-opacity', '1');
+            activePath.setAttribute('stroke-width', '7');
+
+            // Update info box
+            const info = mapData[laneKey];
+            const box = document.getElementById('map-info-box');
+            box.innerHTML = `
+                <strong class="text-indigo-300 text-sm block mb-1">${info.title}</strong>
+                <p class="text-xs text-gold font-medium mb-1">Sports Analogy: ${info.sports}</p>
+                <p class="text-xs text-slate-300">${info.desc}</p>
+            `;
+            box.classList.add('border-indigo-400');
+            setTimeout(() => box.classList.remove('border-indigo-400'), 400);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-indigo-400');
+                btn.classList.add('text-slate-400');
+            });
+            document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
+            document.getElementById(`nav-${tabId}`).classList.add('text-indigo-400');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        const heroes = [
+            ["Aamon", "Endless Shards", "Tracks shards stored in stealth and camouflage breaks for backline deletion.", "Mid Game", "Burst / Stealth"],
+            ["Akai", "Heavy Spin", "Tracks pin-down positioning against walls and ultimate crowd control rotation.", "Mid Game", "Displacement / Tank"],
+            ["Angela", "Heartguard", "Body-snapping attachment onto carry with shield and immobilize.", "Mid Game", "Targeted Shield / Aid"],
+            ["Argus", "Eternal Evil", "Temporary immortality converting damage taken into health.", "Late Game", "Immortality / Carry"],
+            ["Arlott", "Final Slash", "Mark triggers to chain relentless gap-closing dashes.", "Mid Game", "Crowd Control / Slash"],
+            ["Atlas", "Fatal Links", "Ejection mechanics to hook enemy groups into teammate AOE.", "Late Game", "Mass Pull / Setup"],
+            ["Aulus", "Undying Fury", "Tracks passive stack battle fury and unstoppable skill rushes.", "Late Game", "Jungle / EXP Brawler"],
+            ["Barats", "Detona's Welcome", "Big Guy stack accumulation and targeted devour suppression.", "Mid Game", "Suppression / Tanky"],
+            ["Baxia", "Baxia-shield Unity", "Rolling shell mobility and healing reduction aura application.", "Early Game", "Rotation / Anti-Heal"],
+            ["Brody", "Abyss Impact", "Tracks stack accumulation and lock-on execution distance.", "Late Game", "Marksman / Mobility"],
+            ["Carmilla", "Curse of Blood", "Link curse spreading damage across multiple enemy champions.", "Mid Game", "Damage Link / Debuff"],
+            ["Chip", "Shortcut", "Portal gateway network setup across map for sudden ambush rotations.", "Mid Game", "Global Portal / Utility"],
+            ["Chou", "Way of the Dragon", "Tracks Flash-Kick combo setup and displacement angle.", "Mid Game", "Airborne / Lockdown"],
+            ["Cici", "Performer's Delight", "Yo-yo tether distance and continuous sustained kiting.", "Mid Game", "Kiting / Sustained DPS"],
+            ["Claude", "Blazing Duet", "Tracks Dexter's passive stack triggers and attack speed stacks.", "Late Game", "Burst / Sustained DPS"],
+            ["Clint", "Howitzer", "Tracks passive double-shot basic attack rhythm after each skill.", "Late Game", "Marksman / Poke"],
+            ["Diggie", "Time Journey", "Purify AOE shield bubble negating heavy enemy crowd control.", "Late Game", "Anti-CC / Utility"],
+            ["Edith", "Primal Wrath", "Phylax flight conversion into fierce marksman ranged DPS.", "Mid Game", "Tank-to-Marksman"],
+            ["Esmeralda", "Falling Starmoon", "Shield absorption conversion and continuous spell vamp duel.", "Mid Game", "Sustain / Shield Steal"],
+            ["Estes", "Blessing of Moon Goddess", "Continuous team-wide HP regeneration link aura.", "Late Game", "AOE Healing / Sustain"],
+            ["Eudora", "Thunder's Wrath", "Tracks superconductor passive and instant target deletion.", "Mid Game", "Burst Mage / Stun"],
+            ["Fanny", "Cut Throat", "Cable energy lines and high-speed energy regeneration loops.", "Late Game", "Extreme Mobility"],
+            ["Floryn", "Bloom", "Global healing fruit distribution and massive sprout healing bursts.", "Mid Game", "Global Sustain"],
+            ["Fredrinn", "Appraiser's Wrath", "Tracks Combo Points and ultimate reset window on burst damage.", "Mid Game", "Frontline / Tankiness"],
+            ["Freya", "Valkyrie Descent", "Tracks shield stacks and high physical burst during landing.", "Late Game", "Burst Bruiser / Carry"],
+            ["Gloo", "Split, Split", "Tracks gooey stack accumulation and ultimate attach duration.", "Late Game", "Crowd Control / Disruption"],
+            ["Granger", "Death Sonata", "Final bullet critical shot rhythm and long-range rocket barrage.", "Early-Mid", "Burst Marksman"],
+            ["Grock", "Wild Charge", "Wall construction blocking paths and charging for physical impact.", "Early Game", "Zoning / Tank"],
+            ["Gusion", "Incandescence", "Dagger retrieval angles and rapid skill reset burst combos.", "Mid Game", "Burst / Assassin"],
+            ["Harith", "Ages-Ago", "Collar of Eternity cooldown reduction sync and spatial dash loops.", "Late Game", "High Mobility / Magic"],
+            ["Hayabusa", "Ougi: Shadow Kill", "Shadow placement layout and multi-hit single-target focus.", "Mid-Late", "Mobility / Untargetable"],
+            ["Helcurt", "Dark Night Falls", "Global vision blackout and stealth backline assassination.", "Early Game", "Assassination / Stealth"],
+            ["Hirara", "Energy Surge", "Tracks alternative energy resource and high-frequency skirmishes.", "Mid Game", "Agile Assassin"],
+            ["Hylos", "Glorious Pathway", "Speed-boosting trail deployment and massive health pool absorption.", "Early Game", "Zoning / Aura"],
+            ["Joy", "Rhythm of Joy", "Beat rhythm synchronization for skill dashing and CC immunity.", "Mid Game", "Agility / Spell Vamp"],
+            ["Julian", "Enhanced Skill 3", "Look for skill rotation triggers for instant level 3 ganks.", "Early-Mid", "Burst / AOE"],
+            ["Khufra", "Tyrant's Revenge", "Bouncing ball form cancelling enemy dashes and wall-stuns.", "Early Game", "Anti-Dash / Lockdown"],
+            ["Kimmy", "Maximum Charge", "Free-aiming chemical spray gun dealing hybrid damage while moving.", "Early-Mid", "Hybrid Kiting"],
+            ["Lancelot", "Phantom Execution", "Triangular piercing dashes and untargetable iframe casts.", "Mid Game", "Mobility / Iframes"],
+            ["Lapu-Lapu", "Bravest Fighter", "Heavy sword stance transformation and damage mitigation shields.", "Mid Game", "Sustain / Bruiser"],
+            ["Layla", "Destruction Rush", "Positioning distance for maximum passive range scaling and basic DPS.", "Late Game", "Hyper-Carry / DPS"],
+            ["Ling", "Tempest of Blades", "Energy management and wall-walking sword field collection.", "Late Game", "Mobility / Reset"],
+            ["Luo Yi", "Diversion", "Yin-yang mark polarization teleporting teammates across map.", "Mid Game", "Teleport / AOE Pull"],
+            ["Lylia", "Black Shoes", "Tracks Gloom stack detonation timing and spatial recall safety.", "Early-Mid", "AOE Poke / Mage"],
+            ["Marcel", "Golden Hour Stasis", "Stasis field placement freezing time and interrupting skill casts.", "Mid Game", "Roam Stasis / Utility"],
+            ["Masha", "Wild Power", "Three health bar mechanics and attack speed surges when low HP.", "Late Game", "Split Push / Speed"],
+            ["Mathilda", "Circling Eagle", "Guiding Wind flight carry for teammates and shield generation.", "Early-Mid", "Mobility / Utility"],
+            ["Minotaur", "Minoan Fury", "Rage meter filling up to unleash multi-stage airborne knockups.", "Mid Game", "Crowd Control / Tank"],
+            ["Nolan", "Fracture / Rift", "Tracks dimensional rift slash pathing and energy reset dashes.", "Early-Mid", "Assassin / Mobility"],
+            ["Novaria", "Astral Recall", "Long-range sniper projectile impact and global enemy vision reveal.", "Mid-Late", "Long-Range Poke"],
+            ["Odette", "Swan Song", "Channeling area-of-effect ultimate positioning with freeze setup.", "Late Game", "AOE Teamfight Burst"],
+            ["Paquito", "Knockout Strike", "Tracks Heavy Left Punch stack generation and devastating combos.", "Early-Mid", "Burst Bruiser"],
+            ["Pharsa", "Feathered Airstrike", "Long-range artillery bombardment zones forcing enemy displacement.", "Mid Game", "Long-Range Artillery"],
+            ["Phoveus", "Demonic Force", "Blinks and dashes triggered on enemy team; punishes mobility.", "Mid Game", "Anti-Dash / Slam"],
+            ["Rafaela", "Holy Baptism", "Global movement speed buff, slow cleanse, and precision stuns.", "Early Game", "Support / Speed"],
+            ["Ruby", "I'm Offended!", "Hook-and-pull crowd control chains combined with swift hops.", "Early Game", "Crowd Control / Pull"],
+            ["Sora", "Form Switch", "Watch form swaps; high burst Thunder stance vs max-HP tank.", "Mid-Late", "Burst / Versatility"],
+            ["Terizla", "Execution Strike", "Massive chained area-of-effect pull and slow deployment.", "Early-Mid", "AOE / Heavy Slow"],
+            ["Tigreal", "Implosion", "Flash-ult positioning to drag entire enemy backlines into turrets.", "Mid Game", "Mass Pull / Initiation"],
+            ["Uranus", "Consecration", "HP regen stacking rate and continuous energy orb generation.", "Mid-Late", "Sustain / Roamer"],
+            ["Valentina", "I Am You", "Stealing enemy ultimate abilities to turn teamfight dynamics.", "Mid Game", "Imitation / Burst"],
+            ["Wanwan", "Crossbow of Tang", "Weakness pinpoint activation to unleash untargetable bullet barrage.", "Late Game", "Hyper-Carry / Agility"],
+            ["X.Borg", "Last Insanity", "Armor health gauge bar and fiery flame spin radius detonation.", "Early Game", "AOE Poke / Reset"],
+            ["Yi Sun-shin", "Mountain Shocker", "Global reveal arrow tracking and passive melee/ranged swaps.", "Mid Game", "Poke / Global Map"],
+            ["Yu Zhong", "Black Dragon", "Dragon transformation stage and life-stealing spell vamp.", "Late Game", "Sustain / Dive"],
+            ["Yve", "Real World", "Starfield grid drawing for tapping mini-stuns and beam destruction.", "Mid Game", "Zoning / AOE Stun"],
+            ["Zetian", "Celestial Decree", "Heavenly judgment strikes descending upon enemy backline.", "Late Game", "AOE Burst / Mage"],
+            ["Zhuxin", "Lantern Spell", "Lantern floating mechanics carrying enemies across terrain.", "Mid Game", "Displacement / CC"]
+        ];
+
+        const jargon = [
+            ["Burst", "Deleing or dealing massive damage in a fraction of a second using a rapid sequence of skills."],
+            ["CC (Crowd Control)", "Stuns, suppressions, or slows that restrict enemy movement or skill casting."],
+            ["Carry", "The primary damage dealer (Gold Laner or Jungler) designed to win the late game."],
+            ["Contest", "Fighting over a major neutral objective (Turtle or Lord) rather than giving it up."],
+            ["Diving", "Advancing past enemy frontlines or under turrets to eliminate high-priority targets."],
+            ["Gank", "Surprising an enemy in a lane with multiple teammates to secure a quick kill."],
+            ["Kiting", "Attacking an enemy while continuously moving backward to stay out of their range."],
+            ["Lord Dance", "Cautious tactical positioning around the Lord pit before starting the boss."],
+            ["Peeling", "Using abilities to protect allied carries from diving enemy assassins."],
+            ["Power Spike", "A specific level or item threshold where a hero suddenly becomes extremely strong."],
+            ["Retribution", "The dedicated jungler Battle Spell used to secure neutral monsters with true damage."],
+            ["Snowballing", "Translating an early lead into an insurmountable advantage across the map."],
+            ["Zoning", "Controlling an area to prevent the enemy team from approaching safely."]
+        ];
+
+        let currentCheatTab = 'heroes';
+
+        function setCheatTab(tab) {
+            currentCheatTab = tab;
+            const btnH = document.getElementById('btn-filter-heroes');
+            const btnJ = document.getElementById('btn-filter-jargon');
+            if (tab === 'heroes') {
+                btnH.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-md transition";
+                btnJ.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-400 hover:text-white transition";
+            } else {
+                btnJ.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-md transition";
+                btnH.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-400 hover:text-white transition";
+            }
+            filterCheatSheet();
+        }
+
+        function filterCheatSheet() {
+            const query = document.getElementById('cheat-search').value.toLowerCase();
+            const container = document.getElementById('cheat-list-container');
+            container.innerHTML = '';
+
+            if (currentCheatTab === 'heroes') {
+                const filtered = heroes.filter(h => h[0].toLowerCase().includes(query) || h[4].toLowerCase().includes(query));
+                document.getElementById('hero-count-badge').innerText = `${filtered.length} Heroes`;
+                filtered.forEach(h => {
+                    container.innerHTML += `
+                        <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <span class="font-extrabold text-white text-xs">${h[0]}</span>
+                                <span class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-md font-semibold">${h[3]}</span>
+                            </div>
+                            <p class="text-[11px] text-indigo-200 font-medium">Signature: ${h[1]}</p>
+                            <p class="text-[11px] text-slate-300">${h[2]}</p>
+                            <div class="text-[10px] text-slate-400 pt-0.5">Role: ${h[4]}</div>
+                        </div>
+                    `;
+                });
+            } else {
+                const filtered = jargon.filter(j => j[0].toLowerCase().includes(query) || j[1].toLowerCase().includes(query));
+                filtered.forEach(j => {
+                    container.innerHTML += `
+                        <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800 space-y-1">
+                            <span class="font-extrabold text-indigo-300 text-xs block">${j[0]}</span>
+                            <p class="text-[11px] text-slate-300">${j[1]}</p>
+                        </div>
+                    `;
+                });
+            }
+        }
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') sendChatMessage();
+        }
+
+        function sendPresetPrompt(text) {
+            document.getElementById('chat-input').value = text;
+            sendChatMessage();
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const query = input.value.trim();
+            if (!query) return;
+
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-indigo-600 text-white p-2.5 rounded-xl max-w-[85%] text-xs shadow-md">
+                        ${query}
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            setTimeout(() => {
+                let reply = "That's a great question about MLBB! ";
+                const qLower = query.toLowerCase();
+
+                if (qLower.includes('k1ngkong') || qLower.includes('kingkong')) {
+                    reply = "👑 **K1NGKONG** (King Perez) is a famous professional MLBB jungler from ONIC Philippines. He is renowned for his elite mechanical reflexes, clutch Retribution secured objectives, and aggressive assassin plays on heroes like Nolan and Lancelot.";
+                } else if (qLower.includes('2nd place') || qLower.includes('second place')) {
+                    reply = "🥈 Finishing in **2nd place** in a regional MPL tournament is an incredible achievement! It proves the team is among the absolute best in the country and officially qualifies them for international world championships (like M8 in Turkey).";
+                } else if (qLower.includes('lord') || qLower.includes('objective')) {
+                    reply = "🐉 The **Lord** is the giant boss monster that spawns at 8 minutes. Think of it like gaining a massive territory advantage or a penalty kick in football: whichever team slays it gets the Lord to march down the lane and help batter down the enemy base crystal!";
+                } else {
+                    reply = `Based on live tournament data and app guides for "${query}": In pro play, teams balance early-game map control with late-game hyper-carry item scaling. If you're watching live, keep an eye on the 8-minute Lord spawn and team objective fights!`;
+                }
+
+                chatMessages.innerHTML += `
+                    <div class="flex justify-start">
+                        <div class="bg-slate-900 border border-slate-800 text-slate-200 p-3 rounded-xl max-w-[85%] text-xs shadow-md space-y-1">
+                            <span class="font-bold text-indigo-400 block text-[10px]">ELIF AI Assistant</span>
+                            <p>${reply}</p>
+                        </div>
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 600);
+        }
+
+        window.onload = function() {
+            filterCheatSheet();
+        };
+    </script>
+</body>
+</html>
