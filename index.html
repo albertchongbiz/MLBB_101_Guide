@@ -87,7 +87,7 @@
                     <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Tactical Map Hub (v1.05)</span>
                     <h2 class="text-xl font-extrabold text-white mt-1">Land of Dawn: 3D Isometric Map</h2>
                     <p class="text-sm text-slate-300 mt-2 leading-relaxed">
-                        Tap the tactical toggles below to reveal exact lane paths with directional flow, buff camps, turrets, crystals, and minion routes!
+                        Tap the tactical toggles below to reveal exact lane paths, buff camps, turrets, crystals, and minion routes perfectly aligned to the map!
                     </p>
                 </div>
             </div>
@@ -112,12 +112,12 @@
                     <button onclick="toggleLayer('minions')" id="btn-minions" class="py-1.5 px-2 rounded-lg bg-slate-800 text-slate-300 font-bold transition">🛡️ Minions</button>
                 </div>
 
-                <!-- Map Container with 3D Map Image & SVG Overlay -->
+                <!-- Map Container with 3D Map Image & Aligned SVG Overlay -->
                 <div class="relative w-full aspect-[1/1] rounded-xl overflow-hidden border border-slate-800 shadow-inner bg-slate-950 flex items-center justify-center">
                     <!-- Background 3D Isometric Map Image -->
                     <img src="1000433062.webp" alt="Land of Dawn 3D Map" class="absolute inset-0 w-full h-full object-cover opacity-95">
                     
-                    <!-- SVG Overlay for Tactical Items -->
+                    <!-- Perfectly Aligned SVG Overlay -->
                     <svg viewBox="0 0 500 500" class="absolute inset-0 w-full h-full pointer-events-none z-10">
                         <defs>
                             <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -127,65 +127,65 @@
 
                         <!-- 1. LANES WITH DIRECTIONAL ARROWS -->
                         <g id="layer-lanes">
-                            <path d="M 115,395 L 115,115 L 390,115" fill="none" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                            <path d="M 115,395 L 250,250 L 395,110" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                            <path d="M 115,395 L 395,395 L 395,110" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                            <path d="M 95,240 L 250,95 L 405,240" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                            <path d="M 95,240 L 250,250 L 405,240" fill="none" stroke="#ec4899" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                            <path d="M 95,240 L 250,405 L 405,240" fill="none" stroke="#8b5cf6" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
                         </g>
 
                         <!-- 2. BUFF LOCATIONS -->
                         <g id="layer-buffs" class="hidden">
-                            <circle cx="170" cy="320" r="14" fill="#a855f7" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="170" y="324" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
-                            <circle cx="330" cy="180" r="14" fill="#a855f7" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="330" y="184" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
-                            <circle cx="150" cy="190" r="14" fill="#f97316" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="150" y="194" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
-                            <circle cx="350" cy="310" r="14" fill="#f97316" fill-opacity="0.8" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="350" y="314" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
+                            <circle cx="185" cy="310" r="12" fill="#a855f7" fill-opacity="0.85" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
+                            <text x="185" y="313" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
+                            <circle cx="315" cy="190" r="12" fill="#a855f7" fill-opacity="0.85" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
+                            <text x="315" y="193" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
+                            <circle cx="190" cy="190" r="12" fill="#f97316" fill-opacity="0.85" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
+                            <text x="190" y="193" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
+                            <circle cx="310" cy="310" r="12" fill="#f97316" fill-opacity="0.85" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
+                            <text x="310" y="313" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
                         </g>
 
                         <!-- 3. TURRETS -->
                         <g id="layer-turrets" class="hidden">
-                            <rect x="115" y="340" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="115" y="240" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="170" y="395" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="270" y="395" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="190" y="330" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="380" y="150" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="380" y="250" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="320" y="105" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="220" y="105" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
-                            <rect x="300" y="180" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2"/>
+                            <rect x="95" y="235" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="140" y="280" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="180" y="350" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="245" y="380" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="150" y="190" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="400" y="235" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="355" y="190" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="315" y="125" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="250" y="100" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                            <rect x="345" y="285" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
                         </g>
 
                         <!-- 4. CRYSTALS -->
                         <g id="layer-crystals" class="hidden">
-                            <polygon points="115,395 100,415 130,415" fill="#3b82f6" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="115" y="430" font-size="9" fill="#93c5fd" font-weight="bold" text-anchor="middle">Crystal</text>
-                            <polygon points="395,110 380,90 410,90" fill="#ef4444" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="395" y="80" font-size="9" fill="#fca5a5" font-weight="bold" text-anchor="middle">Crystal</text>
+                            <polygon points="95,255 85,275 105,275" fill="#3b82f6" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
+                            <text x="95" y="290" font-size="8" fill="#93c5fd" font-weight="bold" text-anchor="middle">Blue Base</text>
+                            <polygon points="405,215 395,195 415,195" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
+                            <text x="405" y="185" font-size="8" fill="#fca5a5" font-weight="bold" text-anchor="middle">Red Base</text>
                         </g>
 
                         <!-- 5. LORD & TURTLE -->
                         <g id="layer-lord" class="hidden">
-                            <circle cx="185" cy="170" r="16" fill="#10b981" fill-opacity="0.9" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="185" y="174" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Turtle</text>
-                            <circle cx="250" cy="250" r="18" fill="#eab308" fill-opacity="0.9" stroke="#ffffff" stroke-width="2" class="glow-pulse"/>
-                            <text x="250" y="254" font-size="8" fill="#000" font-weight="bold" text-anchor="middle">Lord</text>
+                            <circle cx="215" cy="170" r="14" fill="#10b981" fill-opacity="0.9" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
+                            <text x="215" y="173" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Turtle</text>
+                            <circle cx="250" cy="250" r="16" fill="#eab308" fill-opacity="0.9" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
+                            <text x="250" y="253" font-size="7" fill="#000" font-weight="bold" text-anchor="middle">Lord</text>
                         </g>
 
                         <!-- 6. MINIONS -->
                         <g id="layer-minions" class="hidden">
-                            <path d="M 120,385 L 120,120 L 385,120" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
-                            <path d="M 120,385 L 245,245 L 385,120" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
-                            <path d="M 120,385 L 390,385 L 390,125" fill="none" stroke="#38bdf8" stroke-width="3" class="animate-dash"/>
+                            <path d="M 95,240 L 250,95 L 405,240" fill="none" stroke="#38bdf8" stroke-width="2.5" class="animate-dash"/>
+                            <path d="M 95,240 L 250,250 L 405,240" fill="none" stroke="#38bdf8" stroke-width="2.5" class="animate-dash"/>
+                            <path d="M 95,240 L 250,405 L 405,240" fill="none" stroke="#38bdf8" stroke-width="2.5" class="animate-dash"/>
                         </g>
                     </svg>
                 </div>
 
                 <!-- Info Dynamic Footer -->
                 <div id="realmap-info" class="p-2.5 rounded-xl bg-slate-900/90 border border-indigo-500/30 text-xs text-slate-200">
-                    <span class="font-bold text-indigo-400">🧭 Lane Paths Active:</span> Showing directional flow from Point 1 to Point 2 across all three lanes. Tap buttons above to switch layers!
+                    <span class="font-bold text-indigo-400">🧭 Lane Paths Active:</span> Showing directional flow across Gold, Mid, and EXP lanes.
                 </div>
             </div>
 
@@ -236,7 +236,7 @@
             </div>
         </section>
 
-        <!-- TAB 3: SPECTATOR CHEAT SHEET (v1.05 with Role Filters, Timing Filters & All Heroes) -->
+        <!-- TAB 3: SPECTATOR CHEAT SHEET -->
         <section id="tab-cheatsheet" class="tab-content hidden space-y-4">
             <div class="glass rounded-2xl p-4 space-y-3">
                 <div class="flex items-center justify-between">
@@ -246,7 +246,7 @@
                 
                 <!-- Search Input -->
                 <div class="relative">
-                    <input type="text" id="cheat-search" oninput="filterCheatSheet()" placeholder="Search hero (e.g. Claude, Chou) or term..." 
+                    <input type="text" id="cheat-search" oninput="filterCheatSheet()" placeholder="Search hero or term..." 
                         class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
                     <span class="absolute right-3 top-3 text-slate-500 text-xs">🔍</span>
                 </div>
@@ -256,11 +256,11 @@
                     <span class="text-[10px] text-indigo-300 font-bold block mb-1">Filter by Role:</span>
                     <div class="flex flex-wrap gap-1" id="role-filters">
                         <button onclick="setRoleFilter('All')" id="role-btn-All" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 text-white transition">All Roles</button>
-                        <button onclick="setRoleFilter('Roamer')" id="role-btn-Roamer" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Roamer / Tank</button>
-                        <button onclick="setRoleFilter('Mid')" id="role-btn-Mid" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Mid Lane / Mage</button>
-                        <button onclick="setRoleFilter('Gold')" id="role-btn-Gold" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Gold Lane / Marksman</button>
-                        <button onclick="setRoleFilter('EXP')" id="role-btn-EXP" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">EXP Lane / Fighter</button>
-                        <button onclick="setRoleFilter('Jungler')" id="role-btn-Jungler" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Jungler / Assassin</button>
+                        <button onclick="setRoleFilter('Roamer')" id="role-btn-Roamer" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Roamer</button>
+                        <button onclick="setRoleFilter('Mid')" id="role-btn-Mid" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Mid Lane</button>
+                        <button onclick="setRoleFilter('Gold')" id="role-btn-Gold" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Gold Lane</button>
+                        <button onclick="setRoleFilter('EXP')" id="role-btn-EXP" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">EXP Lane</button>
+                        <button onclick="setRoleFilter('Jungler')" id="role-btn-Jungler" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Jungler</button>
                     </div>
                 </div>
 
@@ -332,7 +332,7 @@
     <!-- JavaScript Logic -->
     <script>
         const layerInfo = {
-            lanes: "🧭 Lane Paths Active: Showing directional flow arrows across Gold, Mid, and EXP lanes on the 3D map.",
+            lanes: "🧭 Lane Paths Active: Showing directional flow arrows from Point 1 to Point 2 across Gold, Mid, and EXP lanes.",
             buffs: "🔥 Buff Camps Active: Pinpointing exact locations of purple (energy/mana) and orange (attack/EXP) buff monsters.",
             turrets: "🏛️ Turrets Active: Highlighting defensive tower placements guarding all three main lanes.",
             crystals: "💎 Crystals Active: Pointing out the core base crystals (destroying this wins the match).",
@@ -471,7 +471,7 @@
                 btnJ.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-400 hover:text-white transition";
             } else {
                 btnJ.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-md transition";
-                btnH.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-300 hover:text-white transition";
+                btnH.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-400 hover:text-white transition";
             }
             filterCheatSheet();
         }
