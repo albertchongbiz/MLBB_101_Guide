@@ -1,693 +1,591 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>MLBB 101 — 3D Interactive Map</title>
-  <style>
-    :root {
-      --bg: #070b14;
-      --panel: rgba(12, 18, 32, 0.92);
-      --card: #141c2e;
-      --border: #2a3650;
-      --blue: #3b82f6;
-      --blue-g: #60a5fa;
-      --red: #ef4444;
-      --gold: #f59e0b;
-      --green: #22c55e;
-      --purple: #a855f7;
-      --cyan: #22d3ee;
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
-    #app { display: flex; height: 100%; width: 100%; }
-    #canvas-wrap { flex: 1; position: relative; min-width: 0; }
-    canvas { display: block; width: 100% !important; height: 100% !important; outline: none; }
-
-    /* Side Panel */
-    #side {
-      width: 320px;
-      max-width: 90vw;
-      background: var(--panel);
-      border-left: 1px solid var(--border);
-      display: flex;
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLBB 101 — Land of Dawn</title>
+<meta name="description" content="Interactive Land of Dawn map: gold lane, EXP lane, minion waves, eighteen turrets, Turtle, Lord, purple and orange buffs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07141c;
+    --surface: #102029;
+    --surface-2: #17303a;
+    --fg: #e7f2ef;
+    --muted: #8ea6ad;
+    --gold: #e4b15a;
+    --ink: #1a1204;
+    --line: #234049;
+    --sans: "Figtree", "Segoe UI", sans-serif;
+    --display: "Rajdhani", "Figtree", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    flex: none;
+  }
+  .brand { margin: 0; }
+  .eyebrow {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 28px;
+    line-height: 1;
+    font-weight: 700;
+  }
+  .hint { margin: 0; color: var(--muted); font-size: 14px; text-align: right; max-width: 280px; }
+  .shell { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  nav {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--line);
+    flex: none;
+  }
+  .group { display: flex; gap: 8px; flex: none; }
+  .group h2 {
+    display: none;
+    margin: 0;
+    padding: 4px 4px 0;
+    font-family: var(--display);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .chip, .mini, .step {
+    min-height: 44px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 0 16px;
+    font-family: var(--display);
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--surface-2);
+    color: var(--fg);
+    border-color: var(--gold);
+  }
+  .main { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .stage {
+    position: relative;
+    flex: 1;
+    min-height: 220px;
+    display: grid;
+    place-items: center;
+    perspective: 1400px;
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 42%, #143440 0%, #07141c 68%);
+    touch-action: none;
+  }
+  .plane {
+    position: relative;
+    width: min(96%, 1040px);
+    aspect-ratio: 1959 / 1080;
+    transform: rotateX(var(--rx, 14deg)) rotateY(var(--ry, -8deg));
+    transform-style: preserve-3d;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 28px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(228, 177, 90, 0.28);
+    will-change: transform;
+  }
+  .plane.is-reset { transition: transform 420ms ease; }
+  .plane img, .plane svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .plane svg { pointer-events: none; }
+  .pin { pointer-events: auto; cursor: pointer; }
+  .drag-note, .reset { position: absolute; top: 12px; z-index: 2; }
+  .drag-note {
+    left: 12px;
+    margin: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(16, 32, 41, 0.9);
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .reset {
+    right: 12px;
+    min-height: 44px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--fg);
+    font-size: 14px;
+  }
+  .sheet {
+    flex: none;
+    max-height: 42dvh;
+    overflow: auto;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding: 16px 16px 12px;
+  }
+  .sheet-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+  .kicker {
+    margin: 0;
+    font-family: var(--display);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  h3 { margin: 0; font-family: var(--display); font-size: 26px; line-height: 1.1; }
+  .count { margin: 0; color: var(--muted); font-family: var(--display); font-size: 14px; }
+  .lede { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+  .filters, .pins, .steps { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .mini[aria-pressed="true"], .step.primary {
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+  .callout {
+    margin: 12px 0 0;
+    padding: 10px 12px;
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    background: var(--bg);
+    font-size: 14px;
+  }
+  .callout strong { color: var(--gold); font-family: var(--display); }
+  ul { margin: 12px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  li { border-left: 2px solid var(--gold); padding-left: 12px; font-size: 14px; }
+  .fine { margin: 12px 0 0; color: var(--muted); font-size: 12px; }
+  .steps { margin-top: 12px; }
+  .step { flex: 1; }
+  @media (min-width: 960px) {
+    .hint { display: block; }
+    .shell { flex-direction: row; }
+    nav {
+      width: 300px;
       flex-direction: column;
-      backdrop-filter: blur(12px);
-      z-index: 20;
-      transition: transform 0.3s ease;
+      overflow: auto;
+      border-bottom: 0;
+      border-right: 1px solid var(--line);
+      padding: 12px;
+      gap: 14px;
     }
-    #side.collapsed { transform: translateX(100%); }
-    .side-header {
-      padding: 0.9rem 1rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-    }
-    .logo {
-      font-weight: 800;
-      font-size: 1.15rem;
-      background: linear-gradient(90deg, #60a5fa, #c4b5fd, #f87171);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .side-body { flex: 1; overflow-y: auto; padding: 0.85rem; }
-    .group { margin-bottom: 1.1rem; }
-    .group h3 {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--muted);
-      margin-bottom: 0.45rem;
-    }
-    .btn-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-    .mbtn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.42rem 0.7rem;
-      border-radius: 8px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .mbtn:hover { border-color: #6366f1; background: #1a2238; }
-    .mbtn.active {
-      background: linear-gradient(135deg, #1e3a8a, #5b21b6);
-      border-color: #818cf8;
-      box-shadow: 0 0 14px rgba(99,102,241,0.4);
-    }
-    .mbtn.gold.active { background: linear-gradient(135deg,#92400e,#d97706); border-color:#fbbf24; }
-    .mbtn.exp.active  { background: linear-gradient(135deg,#14532d,#16a34a); border-color:#4ade80; }
-    .mbtn.mid.active  { background: linear-gradient(135deg,#5b21b6,#a855f7); border-color:#c084fc; }
-    .mbtn.obj.active  { background: linear-gradient(135deg,#0e7490,#06b6d4); border-color:#67e8f9; }
-
-    #info {
-      background: var(--card);
-      border-radius: 10px;
-      border-left: 3px solid var(--blue);
-      padding: 0.8rem;
-      font-size: 0.82rem;
-      margin-top: 0.5rem;
-    }
-    #info h4 { color: var(--blue-g); margin-bottom: 0.3rem; font-size: 0.95rem; }
-    #info p, #info li { color: var(--muted); margin: 0.25rem 0; }
-    #info ul { margin-left: 1rem; }
-
-    /* Top bar overlay */
-    #topbar {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      z-index: 10;
-      pointer-events: none;
-    }
-    #topbar > * { pointer-events: auto; }
-    .tb-btn {
-      background: rgba(15,23,42,0.85);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 0.4rem 0.75rem;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-    }
-    .tb-btn:hover { border-color: var(--blue); }
-    .hint {
-      position: absolute;
-      bottom: 14px;
-      left: 14px;
-      background: rgba(15,23,42,0.8);
-      border: 1px solid var(--border);
-      padding: 0.45rem 0.8rem;
-      border-radius: 8px;
-      font-size: 0.75rem;
-      color: var(--muted);
-      z-index: 10;
-      backdrop-filter: blur(6px);
-    }
-    .mobile-toggle {
-      display: none;
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 30;
-      background: rgba(15,23,42,0.9);
-      border: 1px solid var(--border);
-      color: white;
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-    @media (max-width: 800px) {
-      #side { position: absolute; right: 0; top: 0; bottom: 0; }
-      .mobile-toggle { display: flex; align-items: center; justify-content: center; }
-    }
-    .loading {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--bg);
-      z-index: 50;
-      font-size: 1.1rem;
-      color: var(--muted);
-    }
-    .loading.hide { display: none; }
-  </style>
+    .group { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .group h2 { display: block; grid-column: 1 / -1; }
+    .chip { width: 100%; border-radius: 10px; text-align: left; }
+    .sheet { max-height: 300px; }
+  }
+  @media (max-width: 959px) {
+    .hint { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .plane.is-reset { transition: none; }
+  }
+</style>
 </head>
 <body>
-  <div id="app">
-    <div id="canvas-wrap">
-      <div class="loading" id="loading">Loading 3D Map…</div>
-      <div id="topbar">
-        <button class="tb-btn" id="btn-reset">↺ Reset View</button>
-        <button class="tb-btn" id="btn-top">Top-Down</button>
-        <button class="tb-btn" id="btn-iso">Isometric</button>
-      </div>
-      <div class="hint">🖱️ Drag = Rotate · Scroll = Zoom · Right-drag / Two-finger = Pan</div>
-      <button class="mobile-toggle" id="toggle-side">☰</button>
-    </div>
-
-    <aside id="side">
-      <div class="side-header">
-        <div class="logo">MLBB 101 · 3D Map</div>
-      </div>
-      <div class="side-body">
-        <div class="group">
-          <h3>Lanes (Animated)</h3>
-          <div class="btn-row">
-            <button class="mbtn gold" data-layer="gold">Gold Lane</button>
-            <button class="mbtn exp" data-layer="exp">EXP Lane</button>
-            <button class="mbtn mid" data-layer="mid">Mid Lane</button>
-            <button class="mbtn" data-layer="alllanes">All Lanes</button>
-          </div>
-        </div>
-
-        <div class="group">
-          <h3>Turrets & Bases</h3>
-          <div class="btn-row">
-            <button class="mbtn" data-layer="turrets-blue">Blue Turrets</button>
-            <button class="mbtn" data-layer="turrets-red">Red Turrets</button>
-            <button class="mbtn" data-layer="turrets-all">All Turrets</button>
-            <button class="mbtn" data-layer="bases">Bases</button>
-          </div>
-        </div>
-
-        <div class="group">
-          <h3>Objectives & Buffs</h3>
-          <div class="btn-row">
-            <button class="mbtn obj" data-layer="turtle">Turtle</button>
-            <button class="mbtn obj" data-layer="lord">Lord</button>
-            <button class="mbtn" data-layer="purple">Purple Buff</button>
-            <button class="mbtn" data-layer="orange">Orange Buff</button>
-            <button class="mbtn" data-layer="buffs">All Buffs</button>
-          </div>
-        </div>
-
-        <div class="group">
-          <h3>Clear</h3>
-          <div class="btn-row">
-            <button class="mbtn" data-layer="clear">Clear All</button>
-          </div>
-        </div>
-
-        <div id="info">
-          <h4>How to use</h4>
-          <p>Select any button to highlight lanes or objectives. Lanes are animated glowing paths.</p>
-          <p style="margin-top:0.4rem;">Gold = bottom-side (bonus gold) · EXP = opposite side near first Turtle · Mid = center.</p>
-        </div>
-      </div>
-    </aside>
+<header>
+  <div>
+    <p class="eyebrow">Land of Dawn</p>
+    <h1 class="brand">MLBB 101</h1>
   </div>
+  <p class="hint">Tap a lesson. Lanes draw from point 1 to point 2. Towers, Turtle and buffs pin the spot.</p>
+</header>
+<div class="shell">
+  <nav id="nav" aria-label="Lessons"></nav>
+  <div class="main">
+    <div class="stage" id="stage">
+      <p class="drag-note">Drag to tilt</p>
+      <button class="reset" id="reset" type="button">Reset view</button>
+      <div class="plane" id="plane">
+        <img id="map" alt="Land of Dawn, blue base bottom-left, red base top-right" src="mlbb_map.webp">
+        <svg id="svg" viewBox="0 0 1959 1080" role="img" aria-label="Map marks"></svg>
+      </div>
+    </div>
+    <section class="sheet" id="sheet" aria-live="polite"></section>
+  </div>
+</div>
+<script>
+const W = 1959, H = 1080;
+const NS = "http://www.w3.org/2000/svg";
+const GOLD = "#e4b15a", EXP = "#5eead4", MID = "#f4efe2";
+const BLUE = "#38bdf8", RED = "#fb7185", PURPLE = "#c084fc", ORANGE = "#fb923c";
+const TURTLE = "#3ddc97", LORD = "#f5c16c";
 
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-    }
+const GOLD_PATH = [[26,75],[34,74.6],[48,74.2],[60,73.6],[72,72],[77,66],[80.2,56],[80.4,46],[79.6,36],[78.5,28],[75.2,19]];
+const EXP_PATH = [[23,70],[21.5,59],[21.4,48],[22.5,36],[24.5,28.5],[34,23],[46,21],[56,20.5],[66,21],[73.5,18]];
+const MID_PATH = [[26,67],[31,60],[39,54],[47,46],[56,38],[64,31],[71,25],[74.5,18]];
+const LANES = { gold: { color: GOLD, points: GOLD_PATH }, exp: { color: EXP, points: EXP_PATH }, mid: { color: MID, points: MID_PATH } };
+const LANE_NAME = { gold: "Gold", exp: "EXP", mid: "Mid" };
+const TIER_DETAIL = {
+  outer: "Outer tower. First defense of the lane, and it starts the match with a shield. The shots heat up the longer a hero stands in range. Taking it pays team gold and opens the jungle behind it.",
+  inner: "Inner tower. The second wall. The Lord can crack these. Don't stand in one alone in the early game — the damage ramps if you stay.",
+  base: "Base tower. It guards that lane's inhibitor. When the inhibitor falls, your waves on this lane include a super minion."
+};
+
+function turret(team, lane, tier, at) { return { id: team + "-" + lane + "-" + tier, team, lane, tier, at }; }
+const TURRETS = [
+  turret("blue","exp","base",[22.2,58.2]), turret("blue","exp","inner",[21.6,47.2]), turret("blue","exp","outer",[24.0,28.2]),
+  turret("blue","mid","base",[29.8,59.8]), turret("blue","mid","inner",[38.5,55.5]), turret("blue","mid","outer",[45.8,47.4]),
+  turret("blue","gold","base",[30.6,74.8]), turret("blue","gold","inner",[53.6,74.6]), turret("blue","gold","outer",[72.0,72.0]),
+  turret("red","exp","outer",[36.8,23.4]), turret("red","exp","inner",[50.2,21.4]), turret("red","exp","base",[64.8,22.0]),
+  turret("red","mid","outer",[61.5,34.5]), turret("red","mid","inner",[66.0,31.5]), turret("red","mid","base",[70.5,28.0]),
+  turret("red","gold","outer",[81.0,54.2]), turret("red","gold","inner",[79.6,41.2]), turret("red","gold","base",[79.2,29.2])
+];
+function turretPin(t) {
+  const side = t.team === "blue" ? "Blue" : "Red";
+  return { id: t.id, at: t.at, color: t.team === "blue" ? BLUE : RED, label: side + " · " + LANE_NAME[t.lane] + " · " + t.tier, detail: side + " " + LANE_NAME[t.lane].toLowerCase() + " lane, " + t.tier + " tower. " + TIER_DETAIL[t.tier] };
+}
+const BASES = [
+  { id: "blue-base", at: [22.2,74.6], color: BLUE, label: "Blue base", detail: "Blue crystal, bottom-left of this picture. Heroes revive and heal in the fountain here. Destroy the red crystal to win — not this one." },
+  { id: "red-base", at: [75.0,17.0], color: RED, label: "Red base", detail: "Red crystal, the spire at the top-right. This is the win condition. The nine red towers are what you remove first." }
+];
+const BUFFS = {
+  purple: [
+    { id: "blue-purple", at: [33.0,44.6], color: PURPLE, label: "Blue purple buff", detail: "Blue-side purple camp, in the left jungle. Cooldown reduction plus mana or energy regen. Mages and many junglers hold it. It returns about 90 seconds after it dies." },
+    { id: "red-purple", at: [66.6,42.0], color: PURPLE, label: "Red purple buff", detail: "Red-side purple camp, in the right jungle. Same buff: cooldown and mana or energy. Steal it on an invade, then leave." }
+  ],
+  orange: [
+    { id: "blue-orange", at: [49.8,63.5], color: ORANGE, label: "Blue orange buff", detail: "Blue-side orange camp, lower jungle between mid and the Gold lane. Bonus damage and a slow on hit. Later in the game the marksman often takes this from the jungler." },
+    { id: "red-orange", at: [56.4,36.8], color: ORANGE, label: "Red orange buff", detail: "Red-side orange camp, upper jungle toward the EXP lane. Damage and a slow. Junglers often clear the EXP-side buff first so the path ends near Gold lane for a gank." }
+  ]
+};
+const PITS = {
+  turtle: [{ id: "turtle", at: [64.2,57.2], color: TURTLE, label: "Turtle pit", detail: "The Turtle is the creature in this round lower pit, beside the Gold lane on the artwork. It first spawns at 2:00. In the current season the first one actually appears beside the EXP lane, and the minimap marks whichever pit is next — trust the icon. The team shares gold and EXP. The jungler should last-hit it with Retribution. Turtles stop when the Lord arrives at 8:00." }],
+  lord: [{ id: "lord", at: [40.6,35.2], color: LORD, label: "Lord pit", detail: "The Lord is the larger creature in the upper river, beside the EXP lane on this picture. It spawns at 8:00, walks a lane, and sieges towers for the team that slayed it. It respawns faster after 18:00 and evolves into a stronger Lord. Don't start it while the enemy jungler is alive next to the pit." }]
+};
+
+const LESSONS = [
+  { id: "gold", group: "Lanes", title: "Gold lane", short: "Gold", lede: "A line from point 1, the blue side, to point 2, the red base. This is the marksman's lane.", bullets: ["Minions on this lane pay bonus gold. The cannon in the early waves is worth even more — last-hit it.", "On this map the lane runs along the bottom, then turns up the right side into the red base.", "You are the damage on Turtle and Lord. Shove the wave, then walk to the pit. Don't wander into a dark river alone.", "The outer tower here is a team gold spike. Take it when the enemy marksman has backed."] },
+  { id: "exp", group: "Lanes", title: "EXP lane", short: "EXP", lede: "Point 1 to point 2 along the fighter's lane. Bonus experience, not bonus gold.", bullets: ["You should hit level 4 before the gold laner. That spike is your first fight.", "The lane climbs the left edge, then crosses the top into the red base.", "Cut the wave and rotate when mid calls. Missing a whole wave to stand in a lost river is how you fall behind.", "Later this lane sits beside the Lord pit. Don't donate the outer tower for a wave you could have frozen."] },
+  { id: "mid", group: "Lanes", title: "Mid lane", short: "Mid", lede: "The short diagonal. Mages clear it and leave.", bullets: ["Mid is the closest hero to both river pits. A good mid is at the first Turtle.", "Clear the wave before you roam, or your tower eats a cannon for free.", "The Lithowanderer near the river restores mana and gives a short speed boost on the way to a side lane.", "Losing the mid tower opens your jungle. That is a map problem, not just a lane problem."] },
+  { id: "roles", group: "Lanes", title: "Who goes where", short: "Roles", lede: "Five heroes, three lanes, two jungles. The lines are the lanes. The pins are the buffs.", bullets: ["Gold, the amber line: marksman. EXP, the teal line: fighter. Mid, the pale line: mage.", "Purple and orange pins are the jungler's camps. They take them with Retribution and gank — they don't own a minion wave.", "Roam has no pin. Tank or support, the roamer walks between all of this: vision, sets, and the Turtle fight.", "Lane swaps happen in pro play. In a normal rank game, gold still meets gold and EXP still meets EXP."] },
+  { id: "minion-gold", group: "Minions", title: "Gold minions", short: "Gold wave", lede: "The wave that walks the Gold lane, from each base toward the other.", bullets: ["Melee minions, ranged minions, and a cannon every few waves. The cannon is the gold you are not allowed to miss.", "Towers shoot minions before heroes. They switch to you if you damage an enemy hero under the tower.", "For about the first ten waves, this lane's cannon is worth extra gold. That is why the lane has its name.", "When the inhibitor behind the base tower falls, a super minion joins this wave."] },
+  { id: "minion-mid", group: "Minions", title: "Mid minions", short: "Mid wave", lede: "The middle wave. Shortest walk, fastest crash.", bullets: ["Because the lane is short, the wave meets in the river sooner than the side lanes.", "A crashed mid wave is your timer to rotate. An unshoved mid wave is a reason to stay.", "Same tower rule: minions draw the shots until a hero hits another hero.", "Super minions appear here too, once this lane's inhibitor is down."] },
+  { id: "minion-exp", group: "Minions", title: "EXP minions", short: "EXP wave", lede: "The wave on the fighter's lane. Experience is the resource, not the cannon gold.", bullets: ["Solo the wave and you level faster than a duo lane. That is the entire point of EXP.", "Don't let the jungler tax it early. Their level comes from camps, yours comes from this.", "Freezing near your inner tower is legal and annoying. The enemy has to walk up.", "Inhibitor down on this lane sends a super minion with the wave."] },
+  { id: "minions", group: "Minions", title: "All three waves", short: "All waves", lede: "Gold, mid and EXP at once. Minions have been walking these three lines since 0:00.", bullets: ["Amber is Gold, along the bottom and the right. Teal is EXP, along the left and the top. Pale is mid.", "Each base sends a wave down every lane. They meet in the middle and fight until a hero shows up.", "Farm your own lane early. A jungler who takes your cannon is taxing the carry.", "Siege is just minions plus a hero who doesn't cancel the wave. Towers fall to waves, not to hope."] },
+  { id: "turrets", group: "Turrets", title: "All turrets", short: "All 18", lede: "Nine towers on each side. Three lanes, three towers deep: outer, inner, base.", bullets: ["Frost pins are blue. Crimson pins are red. Tap one to name the lane and the tier.", "Outer towers start with a shield. Inner towers are the second wall. Base towers guard the inhibitor.", "Shots heat up. The longer you stand in range, the harder they hit. Minions draw aggro until you hit a hero.", "The crystal is not one of the nine. The towers are how you reach it."] },
+  { id: "turrets-blue", group: "Turrets", title: "Blue turrets", short: "Blue 9", lede: "The nine blue towers, counting out from the bottom-left base.", bullets: ["Each lane has an outer, an inner and a base tower. That is the whole set.", "Blue's Gold towers sit along the bottom. EXP towers climb the left. Mid towers step up the diagonal.", "Your own outer tower is a resource. Giving it for a wave you didn't need to take is a bad trade.", "Filter by tier if you only want the outers, the inners, or the base towers."] },
+  { id: "turrets-red", group: "Turrets", title: "Red turrets", short: "Red 9", lede: "The nine red towers, wrapped around the top-right base.", bullets: ["Red's Gold towers run down the right edge. EXP towers sit along the top. Mid towers guard the diagonal into the base.", "The outer is the one nearest the river. The base tower is the one nearest the crystal.", "Diving a base tower without minions is how marksmen donate shutdown gold.", "Take outers across the map before you ARAM one lane into a base tower."] },
+  { id: "turtle", group: "Objectives", title: "Turtle", short: "Turtle", lede: "The round pit in the lower river. Early-game team gold.", bullets: ["On this artwork the Turtle sits beside the Gold lane. Spawn time is 2:00.", "Current season: the first Turtle spawns beside the EXP lane, and later ones move. The minimap shows the next pit. Don't memorize only one side.", "Gold and EXP go to the whole team. Retribution gets the last hit. A stolen Turtle is a double loss.", "They stop at 8:00, when the Lord takes over. There are only a few each match."] },
+  { id: "lord", group: "Objectives", title: "Lord", short: "Lord", lede: "The upper river pit. From 8:00 this is the objective that ends games.", bullets: ["Slaying the Lord sends it down a lane to hit towers. Someone still has to push with it.", "It respawns on a few-minute timer, shorter after 18:00, and it evolves into a stronger Lord around then.", "Start it when you know the enemy jungler is dead or far. A retribution steal swings the map.", "On this picture the Lord is the large creature in the upper pit, beside the EXP lane."] },
+  { id: "purple", group: "Objectives", title: "Purple buff", short: "Purple", lede: "Both purple camps. Cooldown reduction, and mana or energy back.", bullets: ["Blue's camp is in the left jungle. Red's is in the right jungle. Same buff, mirrored.", "Junglers and mages want it. Marksmen usually do not.", "Camps are up as the match starts and return about 90 seconds after they die. Time your invade off that.", "Leave the last hit to the hero who will hold the buff."] },
+  { id: "orange", group: "Objectives", title: "Orange buff", short: "Orange", lede: "Both orange camps. Damage, and a slow on your attacks.", bullets: ["Blue's camp is in the lower jungle. Red's is in the upper jungle, toward the EXP lane.", "This is the buff the marksman takes once they are the team's damage. Early, it belongs to the jungler.", "A common first clear starts on the buff nearer EXP, so you finish near Gold lane in time to gank.", "Respawn is about 90 seconds, same as purple."] },
+  { id: "bases", group: "Objectives", title: "Bases", short: "Bases", lede: "Two crystals. Destroy the enemy one. That is the whole game.", bullets: ["Blue is the fountain at the bottom-left. Red is the spire at the top-right.", "The fountain heals you. Recalling is a skill. Dying with 2,000 gold in your pocket is not.", "Nine towers stand in front of each crystal. The base towers are the last of those nine, not the crystal itself.", "A lord marching into a base with no one home is how matches actually end."] }
+];
+const GROUPS = ["Lanes", "Minions", "Turrets", "Objectives"];
+
+function lanePins(lane) { return TURRETS.filter((t) => t.lane === lane).map(turretPin); }
+function pathOf(lane) { return { id: lane, color: LANES[lane].color, points: LANES[lane].points }; }
+function viewFor(id, tier) {
+  if (id === "gold") return { paths: [pathOf("gold")], pins: [], numbered: true };
+  if (id === "exp") return { paths: [pathOf("exp")], pins: [], numbered: true };
+  if (id === "mid") return { paths: [pathOf("mid")], pins: [], numbered: true };
+  if (id === "roles") return { paths: [pathOf("gold"), pathOf("exp"), pathOf("mid")], pins: BUFFS.purple.concat(BUFFS.orange), numbered: false };
+  if (id === "minion-gold") return { paths: [pathOf("gold")], pins: lanePins("gold"), numbered: true };
+  if (id === "minion-mid") return { paths: [pathOf("mid")], pins: lanePins("mid"), numbered: true };
+  if (id === "minion-exp") return { paths: [pathOf("exp")], pins: lanePins("exp"), numbered: true };
+  if (id === "minions") return { paths: [pathOf("gold"), pathOf("exp"), pathOf("mid")], pins: [], numbered: false };
+  if (id === "turrets" || id === "turrets-blue" || id === "turrets-red") {
+    const team = id === "turrets-blue" ? "blue" : id === "turrets-red" ? "red" : null;
+    const pins = TURRETS.filter((t) => !team || t.team === team).filter((t) => tier === "all" || t.tier === tier).map(turretPin);
+    return { paths: [], pins, numbered: false };
   }
-  </script>
-  <script type="module">
-    import * as THREE from 'three';
-    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  if (id === "turtle") return { paths: [], pins: PITS.turtle, numbered: false };
+  if (id === "lord") return { paths: [], pins: PITS.lord, numbered: false };
+  if (id === "purple") return { paths: [], pins: BUFFS.purple, numbered: false };
+  if (id === "orange") return { paths: [], pins: BUFFS.orange, numbered: false };
+  if (id === "bases") return { paths: [], pins: BASES, numbered: false };
+  return { paths: [], pins: [], numbered: false };
+}
 
-    // ---------- Scene setup ----------
-    const container = document.getElementById('canvas-wrap');
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x070b14);
-    scene.fog = new THREE.Fog(0x070b14, 18, 45);
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let lessonId = "gold";
+let tier = "all";
+let focusId = null;
+let movers = [];
+const svg = document.getElementById("svg");
+const sheet = document.getElementById("sheet");
+const nav = document.getElementById("nav");
+const plane = document.getElementById("plane");
 
-    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 200);
-    camera.position.set(0, 12, 14);
+function svgEl(name, attrs) {
+  const node = document.createElementNS(NS, name);
+  for (const key in attrs) node.setAttribute(key, attrs[key]);
+  return node;
+}
+function px(p) { return [p[0] / 100 * W, p[1] / 100 * H]; }
+function smooth(points) {
+  const pts = points.map(px);
+  let d = "M " + pts[0][0].toFixed(1) + " " + pts[0][1].toFixed(1);
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i];
+    const p1 = pts[i];
+    const p2 = pts[i + 1];
+    const p3 = pts[i + 2] || p2;
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += " C " + c1x.toFixed(1) + " " + c1y.toFixed(1) + ", " + c2x.toFixed(1) + " " + c2y.toFixed(1) + ", " + p2[0].toFixed(1) + " " + p2[1].toFixed(1);
+  }
+  return d;
+}
+function lesson() { return LESSONS.find((item) => item.id === lessonId) || LESSONS[0]; }
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    container.appendChild(renderer.domElement);
-
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.08;
-    controls.minDistance = 4;
-    controls.maxDistance = 32;
-    controls.maxPolarAngle = Math.PI * 0.48;
-    controls.target.set(0, 0, 0);
-
-    // Lights
-    const amb = new THREE.AmbientLight(0x8899bb, 0.55);
-    scene.add(amb);
-    const dir = new THREE.DirectionalLight(0xffffff, 1.1);
-    dir.position.set(5, 18, 8);
-    scene.add(dir);
-    const dir2 = new THREE.DirectionalLight(0x6688ff, 0.35);
-    dir2.position.set(-8, 10, -6);
-    scene.add(dir2);
-
-    // ---------- Map plane ----------
-    const MAP_W = 16;
-    const MAP_H = 16 * (1080 / 1959); // keep aspect ~ 8.82
-
-    const loader = new THREE.TextureLoader();
-    const mapTex = await new Promise((resolve, reject) => {
-      loader.load('mlbb_map.webp', resolve, undefined, reject);
+function renderNav() {
+  nav.innerHTML = "";
+  GROUPS.forEach((group) => {
+    const wrap = document.createElement("div");
+    wrap.className = "group";
+    const title = document.createElement("h2");
+    title.textContent = group;
+    wrap.appendChild(title);
+    LESSONS.filter((item) => item.group === group).forEach((item) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "chip";
+      button.textContent = item.short;
+      button.setAttribute("aria-pressed", item.id === lessonId ? "true" : "false");
+      button.addEventListener("click", () => pick(item.id));
+      wrap.appendChild(button);
     });
-    mapTex.colorSpace = THREE.SRGBColorSpace;
-    mapTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    nav.appendChild(wrap);
+  });
+  const active = nav.querySelector('[aria-pressed="true"]');
+  if (active) active.scrollIntoView({ inline: "center", block: "nearest" });
+}
 
-    const mapGeo = new THREE.PlaneGeometry(MAP_W, MAP_H);
-    const mapMat = new THREE.MeshStandardMaterial({
-      map: mapTex,
-      roughness: 0.85,
-      metalness: 0.05,
-      side: THREE.DoubleSide
+function renderSheet() {
+  const item = lesson();
+  const view = viewFor(lessonId, tier);
+  const index = LESSONS.findIndex((entry) => entry.id === lessonId);
+  const focused = view.pins.find((pin) => pin.id === focusId);
+  const turretLesson = item.group === "Turrets";
+  sheet.innerHTML = "";
+  const head = document.createElement("div");
+  head.className = "sheet-head";
+  const titles = document.createElement("div");
+  const kicker = document.createElement("p");
+  kicker.className = "kicker";
+  kicker.textContent = item.group;
+  const h = document.createElement("h3");
+  h.textContent = item.title;
+  titles.append(kicker, h);
+  const count = document.createElement("p");
+  count.className = "count";
+  count.textContent = (index + 1) + "/" + LESSONS.length;
+  head.append(titles, count);
+  const lede = document.createElement("p");
+  lede.className = "lede";
+  lede.textContent = item.lede;
+  sheet.append(head, lede);
+
+  if (turretLesson) {
+    const filters = document.createElement("div");
+    filters.className = "filters";
+    filters.setAttribute("role", "group");
+    filters.setAttribute("aria-label", "Tower tier");
+    [["all", "All tiers"], ["outer", "Outer"], ["inner", "Inner"], ["base", "Base"]].forEach(([id, label]) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "mini";
+      button.textContent = label;
+      button.setAttribute("aria-pressed", tier === id ? "true" : "false");
+      button.addEventListener("click", () => { tier = id; focusId = null; render(); });
+      filters.appendChild(button);
     });
-    const mapMesh = new THREE.Mesh(mapGeo, mapMat);
-    mapMesh.rotation.x = -Math.PI / 2;
-    mapMesh.receiveShadow = true;
-    scene.add(mapMesh);
-
-    // Subtle ground glow under map
-    const groundGeo = new THREE.PlaneGeometry(MAP_W + 4, MAP_H + 4);
-    const groundMat = new THREE.MeshBasicMaterial({ color: 0x0a1220, transparent: true, opacity: 0.6 });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.position.y = -0.02;
-    scene.add(ground);
-
-    // ---------- Coordinate helpers ----------
-    // Map UV (0-1) → world XZ. Image origin top-left, Three.js plane center origin.
-    function uvToWorld(u, v, y = 0.08) {
-      const x = (u - 0.5) * MAP_W;
-      const z = (v - 0.5) * MAP_H;
-      return new THREE.Vector3(x, y, z);
-    }
-
-    // Improved UV coordinates calibrated to the provided map image
-    // Orientation: Blue base = bottom-left, Red base = top-right
-    // u: 0 = left edge of image, 1 = right edge
-    // v: 0 = top edge of image, 1 = bottom edge of image
-    const UV = {
-      // Gold Lane (Blue bottom path → towards Red)
-      // Follows the lower dirt path visible on the map
-      gold: [
-        [0.20, 0.73], [0.28, 0.70], [0.38, 0.66], [0.48, 0.62],
-        [0.58, 0.58], [0.68, 0.53], [0.76, 0.47], [0.82, 0.40]
-      ],
-      // EXP Lane (Blue top/side path → towards Red)
-      // Follows the upper path near the top edge of the island
-      exp: [
-        [0.21, 0.38], [0.30, 0.32], [0.40, 0.28], [0.50, 0.26],
-        [0.60, 0.27], [0.70, 0.31], [0.78, 0.37], [0.84, 0.44]
-      ],
-      // Mid Lane (center path)
-      mid: [
-        [0.24, 0.58], [0.34, 0.54], [0.44, 0.50], [0.54, 0.47],
-        [0.64, 0.44], [0.74, 0.40]
-      ],
-      // Blue Turrets (9) — left/bottom side
-      // Gold lane towers (bottom), Mid towers, EXP towers (upper)
-      blueTurrets: [
-        // Gold lane: outer → middle → inner
-        [0.24, 0.71], [0.34, 0.67], [0.43, 0.63],
-        // Mid lane
-        [0.27, 0.55], [0.37, 0.51], [0.46, 0.48],
-        // EXP lane
-        [0.25, 0.40], [0.35, 0.35], [0.44, 0.32]
-      ],
-      // Red Turrets (9) — right/top side
-      redTurrets: [
-        // Gold-side (from Red perspective, lower-right)
-        [0.78, 0.35], [0.70, 0.40], [0.62, 0.45],
-        // Mid
-        [0.77, 0.48], [0.69, 0.51], [0.61, 0.53],
-        // EXP-side (upper-right)
-        [0.79, 0.28], [0.71, 0.30], [0.63, 0.33]
-      ],
-      // Bases
-      bases: [
-        [0.18, 0.72], // Blue base (bottom-left glowing structure)
-        [0.82, 0.25]  // Red base (top-right red energy structure)
-      ],
-      // Turtle pits (the two circular water platforms in the river)
-      turtle: [
-        [0.40, 0.40], // upper-leftish river pit
-        [0.62, 0.55]  // lower-rightish river pit
-      ],
-      // Lord (central river area between the two pits)
-      lord: [[0.52, 0.48]],
-      // Purple Buff (jungle camps — magic/CDR)
-      purple: [
-        [0.30, 0.48], // Blue jungle
-        [0.72, 0.40]  // Red jungle
-      ],
-      // Orange Buff (jungle camps — physical)
-      orange: [
-        [0.32, 0.60], // Blue jungle lower
-        [0.70, 0.52]  // Red jungle lower
-      ]
-    };
-
-    // ---------- Animated lane lines ----------
-    function createAnimatedLane(uvPoints, color, name) {
-      const points = uvPoints.map(([u, v]) => uvToWorld(u, v));
-      const curve = new THREE.CatmullRomCurve3(points);
-      const tubeGeo = new THREE.TubeGeometry(curve, 64, 0.045, 8, false);
-
-      // Core glow tube
-      const mat = new THREE.MeshBasicMaterial({
-        color: color,
-        transparent: true,
-        opacity: 0.85,
-        depthWrite: false
-      });
-      const tube = new THREE.Mesh(tubeGeo, mat);
-      tube.visible = false;
-      tube.userData = { type: 'lane', name };
-
-      // Outer soft glow (slightly larger, lower opacity)
-      const tubeGeo2 = new THREE.TubeGeometry(curve, 64, 0.09, 8, false);
-      const mat2 = new THREE.MeshBasicMaterial({
-        color: color,
-        transparent: true,
-        opacity: 0.25,
-        depthWrite: false
-      });
-      const glow = new THREE.Mesh(tubeGeo2, mat2);
-      glow.visible = false;
-      glow.userData = { type: 'lane', name };
-
-      // Moving dash effect using a second thinner tube with offset material
-      const dashGeo = new THREE.TubeGeometry(curve, 64, 0.025, 6, false);
-      const dashMat = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.7,
-        depthWrite: false
-      });
-      const dash = new THREE.Mesh(dashGeo, dashMat);
-      dash.visible = false;
-      dash.userData = { type: 'lane', name, isDash: true, progress: 0 };
-
-      scene.add(tube, glow, dash);
-      return { tube, glow, dash, curve, color };
-    }
-
-    const lanes = {
-      gold: createAnimatedLane(UV.gold, 0xf59e0b, 'gold'),
-      exp:  createAnimatedLane(UV.exp,  0x22c55e, 'exp'),
-      mid:  createAnimatedLane(UV.mid,  0xa855f7, 'mid')
-    };
-
-    // ---------- Markers ----------
-    function createMarker(pos, color, size = 0.18, label = '') {
-      const group = new THREE.Group();
-      group.position.copy(pos);
-      group.visible = false;
-
-      // Outer ring
-      const ringGeo = new THREE.RingGeometry(size * 0.7, size, 32);
-      const ringMat = new THREE.MeshBasicMaterial({
-        color: color,
-        transparent: true,
-        opacity: 0.9,
-        side: THREE.DoubleSide,
-        depthWrite: false
-      });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = -Math.PI / 2;
-      group.add(ring);
-
-      // Inner fill
-      const circleGeo = new THREE.CircleGeometry(size * 0.55, 24);
-      const circleMat = new THREE.MeshBasicMaterial({
-        color: color,
-        transparent: true,
-        opacity: 0.35,
-        side: THREE.DoubleSide,
-        depthWrite: false
-      });
-      const circle = new THREE.Mesh(circleGeo, circleMat);
-      circle.rotation.x = -Math.PI / 2;
-      circle.position.y = 0.01;
-      group.add(circle);
-
-      // Vertical pulse line
-      const lineGeo = new THREE.BufferGeometry().setFromPoints([
-        new THREE.Vector3(0, 0, 0),
-        new THREE.Vector3(0, size * 2.2, 0)
-      ]);
-      const lineMat = new THREE.LineBasicMaterial({ color: color, transparent: true, opacity: 0.6 });
-      const line = new THREE.Line(lineGeo, lineMat);
-      group.add(line);
-
-      // Soft point light
-      const light = new THREE.PointLight(color, 0.6, 2.5);
-      light.position.y = 0.4;
-      group.add(light);
-
-      scene.add(group);
-      return group;
-    }
-
-    const markers = {
-      blueTurrets: UV.blueTurrets.map(p => createMarker(uvToWorld(...p), 0x3b82f6, 0.16)),
-      redTurrets:  UV.redTurrets.map(p => createMarker(uvToWorld(...p), 0xef4444, 0.16)),
-      bases:       UV.bases.map((p, i) => createMarker(uvToWorld(...p), i === 0 ? 0x3b82f6 : 0xef4444, 0.28)),
-      turtle:      UV.turtle.map(p => createMarker(uvToWorld(...p), 0x22d3ee, 0.22)),
-      lord:        UV.lord.map(p => createMarker(uvToWorld(...p), 0xf59e0b, 0.26)),
-      purple:      UV.purple.map(p => createMarker(uvToWorld(...p), 0xa855f7, 0.18)),
-      orange:      UV.orange.map(p => createMarker(uvToWorld(...p), 0xf97316, 0.18))
-    };
-
-    // ---------- Layer control ----------
-    const infoData = {
-      gold: {
-        title: "Gold Lane",
-        html: `<p>Usually the bottom side lane (opposite first Turtle). Marksman farms here for bonus gold from siege minions.</p>
-               <ul><li>Role: Marksman (sometimes special mages)</li><li>Roamer often starts here</li><li>Goal: scale into late-game DPS</li></ul>`
-      },
-      exp: {
-        title: "EXP Lane",
-        html: `<p>Side lane closest to the first Turtle spawn. Solo lane that grants bonus experience.</p>
-               <ul><li>Role: Fighter / durable Tank</li><li>Level 4 power spike matters</li><li>Rotate to first Turtle fights</li></ul>`
-      },
-      mid: {
-        title: "Mid Lane",
-        html: `<p>Central shortest path. Mage clears waves fast then rotates to sides or objectives.</p>
-               <ul><li>Role: Mage</li><li>High map impact through rotations</li></ul>`
-      },
-      alllanes: {
-        title: "All Three Lanes",
-        html: `<p>Gold (bonus gold) · Mid (rotations) · EXP (bonus EXP + near Turtle).</p>`
-      },
-      "turrets-blue": {
-        title: "Blue Side Turrets (9)",
-        html: `<p>3 per lane: Outer → Inner → Base. Protect yours, take the enemy’s to open space.</p>`
-      },
-      "turrets-red": {
-        title: "Red Side Turrets (9)",
-        html: `<p>Same structure on the opposite side. Outer turrets first = map control.</p>`
-      },
-      "turrets-all": {
-        title: "All 18 Turrets",
-        html: `<p>Each team has 9 turrets + the Crystal. Taking towers gives gold and opens the map.</p>`
-      },
-      bases: {
-        title: "Bases & Crystal",
-        html: `<p>Blue (bottom-left area) and Red (top-right). Destroy the enemy Crystal to win.</p>`
-      },
-      turtle: {
-        title: "Turtle",
-        html: `<p>Spawns ~2:00 near the EXP side of the river. Team gold + EXP. First major objective.</p>
-               <ul><li>Jungler Retribution is key</li><li>Whole team should rotate if contestable</li></ul>`
-      },
-      lord: {
-        title: "Lord",
-        html: `<p>Spawns ~8:00. Killing it summons a powerful minion that pushes a lane hard.</p>`
-      },
-      purple: {
-        title: "Purple Buff",
-        html: `<p>Cooldown Reduction + Mana/Energy. Great for mages and skill-heavy heroes.</p>`
-      },
-      orange: {
-        title: "Orange (Red) Buff",
-        html: `<p>Bonus damage + slow on basic attacks. Preferred by Marksmen and physical junglers.</p>`
-      },
-      buffs: {
-        title: "Jungle Buffs",
-        html: `<p>Purple = CDR/Mana · Orange = Damage/Slow. Each jungle has both.</p>`
-      },
-      clear: {
-        title: "Cleared",
-        html: `<p>Select any button above to highlight lanes or objectives again.</p>`
-      }
-    };
-
-    function setLaneVisible(name, visible) {
-      const L = lanes[name];
-      if (!L) return;
-      L.tube.visible = visible;
-      L.glow.visible = visible;
-      L.dash.visible = visible;
-    }
-
-    function setMarkersVisible(arr, visible) {
-      arr.forEach(m => m.visible = visible);
-    }
-
-    function clearAll() {
-      Object.keys(lanes).forEach(k => setLaneVisible(k, false));
-      Object.values(markers).forEach(arr => setMarkersVisible(arr, false));
-      document.querySelectorAll('.mbtn').forEach(b => b.classList.remove('active'));
-    }
-
-    function showInfo(key) {
-      const box = document.getElementById('info');
-      const d = infoData[key] || infoData.clear;
-      box.innerHTML = `<h4>${d.title}</h4>${d.html}`;
-    }
-
-    document.querySelectorAll('.mbtn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const layer = btn.dataset.layer;
-        clearAll();
-        if (layer === 'clear') {
-          showInfo('clear');
-          return;
-        }
-        btn.classList.add('active');
-
-        if (layer === 'gold') setLaneVisible('gold', true);
-        else if (layer === 'exp') setLaneVisible('exp', true);
-        else if (layer === 'mid') setLaneVisible('mid', true);
-        else if (layer === 'alllanes') {
-          setLaneVisible('gold', true);
-          setLaneVisible('exp', true);
-          setLaneVisible('mid', true);
-        }
-        else if (layer === 'turrets-blue') setMarkersVisible(markers.blueTurrets, true);
-        else if (layer === 'turrets-red') setMarkersVisible(markers.redTurrets, true);
-        else if (layer === 'turrets-all') {
-          setMarkersVisible(markers.blueTurrets, true);
-          setMarkersVisible(markers.redTurrets, true);
-        }
-        else if (layer === 'bases') setMarkersVisible(markers.bases, true);
-        else if (layer === 'turtle') setMarkersVisible(markers.turtle, true);
-        else if (layer === 'lord') setMarkersVisible(markers.lord, true);
-        else if (layer === 'purple') setMarkersVisible(markers.purple, true);
-        else if (layer === 'orange') setMarkersVisible(markers.orange, true);
-        else if (layer === 'buffs') {
-          setMarkersVisible(markers.purple, true);
-          setMarkersVisible(markers.orange, true);
-        }
-        showInfo(layer);
-      });
+    sheet.appendChild(filters);
+  }
+  if (focused) {
+    const call = document.createElement("p");
+    call.className = "callout";
+    const strong = document.createElement("strong");
+    strong.textContent = focused.label + ". ";
+    call.append(strong, document.createTextNode(focused.detail));
+    sheet.appendChild(call);
+  }
+  const list = document.createElement("ul");
+  item.bullets.forEach((bullet) => {
+    const li = document.createElement("li");
+    li.textContent = bullet;
+    list.appendChild(li);
+  });
+  sheet.appendChild(list);
+  if (view.pins.length > 1) {
+    const row = document.createElement("div");
+    row.className = "pins";
+    view.pins.forEach((pin) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "mini";
+      button.textContent = pin.label;
+      button.setAttribute("aria-pressed", focusId === pin.id ? "true" : "false");
+      button.addEventListener("click", () => setFocus(focusId === pin.id ? null : pin.id));
+      row.appendChild(button);
     });
+    sheet.appendChild(row);
+  }
+  const fine = document.createElement("p");
+  fine.className = "fine";
+  fine.textContent = "Fan-made 101 for the 5v5 map. Not affiliated with Moonton. Timings follow the current season and can move with a patch.";
+  const steps = document.createElement("div");
+  steps.className = "steps";
+  const back = document.createElement("button");
+  back.type = "button";
+  back.className = "step";
+  back.textContent = "Back";
+  back.addEventListener("click", () => step(-1));
+  const next = document.createElement("button");
+  next.type = "button";
+  next.className = "step primary";
+  next.textContent = "Next lesson";
+  next.addEventListener("click", () => step(1));
+  steps.append(back, next);
+  sheet.append(fine, steps);
+}
 
-    // View presets
-    document.getElementById('btn-reset').onclick = () => {
-      camera.position.set(0, 12, 14);
-      controls.target.set(0, 0, 0);
-      controls.update();
-    };
-    document.getElementById('btn-top').onclick = () => {
-      camera.position.set(0, 18, 0.01);
-      controls.target.set(0, 0, 0);
-      controls.update();
-    };
-    document.getElementById('btn-iso').onclick = () => {
-      camera.position.set(9, 11, 11);
-      controls.target.set(0, 0, 0);
-      controls.update();
-    };
-
-    // Mobile side toggle
-    document.getElementById('toggle-side').onclick = () => {
-      document.getElementById('side').classList.toggle('collapsed');
-    };
-
-    // ---------- Animation loop ----------
-    let t = 0;
-    function animate() {
-      requestAnimationFrame(animate);
-      t += 0.016;
-      controls.update();
-
-      // Pulse markers
-      Object.values(markers).forEach(arr => {
-        arr.forEach((g, i) => {
-          if (!g.visible) return;
-          const s = 1 + Math.sin(t * 3 + i) * 0.08;
-          g.scale.set(s, s, s);
-        });
-      });
-
-      // Animate lane dash opacity / slight scale for “flow”
-      Object.values(lanes).forEach(L => {
-        if (L.dash.visible) {
-          L.dash.material.opacity = 0.35 + Math.sin(t * 4) * 0.3;
-          L.glow.material.opacity = 0.18 + Math.sin(t * 2.2) * 0.08;
-        }
-      });
-
-      renderer.render(scene, camera);
+function renderMap() {
+  const view = viewFor(lessonId, tier);
+  svg.replaceChildren();
+  movers = [];
+  view.paths.forEach((spec) => {
+    const d = smooth(spec.points);
+    const glow = svgEl("path", { d, fill: "none", stroke: spec.color, "stroke-width": "26", "stroke-linecap": "round", "stroke-linejoin": "round", opacity: "0.28" });
+    const core = svgEl("path", { d, fill: "none", stroke: spec.color, "stroke-width": "8", "stroke-linecap": "round", "stroke-linejoin": "round" });
+    svg.append(glow, core);
+    if (!reduced) {
+      const len = core.getTotalLength();
+      core.style.strokeDasharray = String(len);
+      core.style.strokeDashoffset = String(len);
+      core.animate([{ strokeDashoffset: len }, { strokeDashoffset: 0 }], { duration: 1100, easing: "ease-out", fill: "forwards" });
     }
-
-    // Resize
-    function onResize() {
-      const w = container.clientWidth;
-      const h = container.clientHeight;
-      camera.aspect = w / h;
-      camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+    for (let i = 0; i < 4; i++) {
+      const dot = svgEl("circle", { r: "7", fill: spec.color });
+      svg.appendChild(dot);
+      movers.push({ path: core, el: dot, offset: i / 4 });
     }
-    window.addEventListener('resize', onResize);
-    onResize();
+    if (view.numbered && view.paths.length === 1) {
+      badge(spec.points[0], "1");
+      badge(spec.points[spec.points.length - 1], "2");
+    }
+  });
+  view.pins.forEach((pin) => {
+    const [x, y] = px(pin.at);
+    const g = svgEl("g", { class: "pin", transform: "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")" });
+    g.append(
+      svgEl("circle", { r: "26", fill: pin.color, opacity: "0.22", class: "halo" }),
+      svgEl("circle", { r: "16", fill: "none", stroke: pin.color, "stroke-width": "4", class: "ring" }),
+      svgEl("circle", { r: "8", fill: pin.color, class: "dot" })
+    );
+    g.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setFocus(focusId === pin.id ? null : pin.id);
+    });
+    g.dataset.id = pin.id;
+    svg.appendChild(g);
+  });
+  paintPins();
+}
 
-    // Start
-    document.getElementById('loading').classList.add('hide');
-    animate();
+function badge(at, digit) {
+  const [x, y] = px(at);
+  const g = svgEl("g", { transform: "translate(" + x.toFixed(1) + " " + y.toFixed(1) + ")" });
+  g.append(svgEl("circle", { r: "24", fill: GOLD, stroke: "#1a1204", "stroke-width": "4" }));
+  const text = svgEl("text", { "text-anchor": "middle", "dominant-baseline": "central", fill: "#1a1204", "font-size": "26", "font-family": "Rajdhani, sans-serif", "font-weight": "700" });
+  text.textContent = digit;
+  g.appendChild(text);
+  svg.appendChild(g);
+}
 
-    // Default: show all lanes briefly then clear (or leave clean)
-    // Optional: auto-show mid on start
-    // setLaneVisible('mid', true);
-    // showInfo('mid');
-  </script>
+function paintPins() {
+  svg.querySelectorAll(".pin").forEach((node) => {
+    const dim = focusId !== null && node.dataset.id !== focusId;
+    node.querySelector(".halo").setAttribute("opacity", dim ? "0.08" : "0.28");
+    node.querySelector(".ring").setAttribute("opacity", dim ? "0.35" : "1");
+    node.querySelector(".dot").setAttribute("opacity", dim ? "0.35" : "1");
+  });
+}
+
+function pick(id) { lessonId = id; tier = "all"; focusId = null; render(); }
+function setFocus(id) { focusId = id; renderSheet(); paintPins(); }
+function step(dir) {
+  const index = LESSONS.findIndex((item) => item.id === lessonId);
+  pick(LESSONS[(index + dir + LESSONS.length) % LESSONS.length].id);
+}
+function render() { renderNav(); renderSheet(); renderMap(); }
+
+let rx = 14, ry = -8, drag = false, lx = 0, ly = 0;
+const stage = document.getElementById("stage");
+function applyTilt(animate) {
+  plane.classList.toggle("is-reset", animate);
+  plane.style.setProperty("--rx", rx + "deg");
+  plane.style.setProperty("--ry", ry + "deg");
+}
+applyTilt(false);
+stage.addEventListener("pointerdown", (event) => {
+  if (event.target.closest(".reset")) return;
+  drag = true;
+  lx = event.clientX;
+  ly = event.clientY;
+  stage.setPointerCapture(event.pointerId);
+});
+stage.addEventListener("pointermove", (event) => {
+  if (!drag) return;
+  ry = Math.max(-32, Math.min(32, ry + (event.clientX - lx) * 0.08));
+  rx = Math.max(-6, Math.min(36, rx - (event.clientY - ly) * 0.08));
+  lx = event.clientX;
+  ly = event.clientY;
+  applyTilt(false);
+});
+stage.addEventListener("pointerup", () => { drag = false; });
+stage.addEventListener("pointercancel", () => { drag = false; });
+document.getElementById("reset").addEventListener("click", () => { rx = 14; ry = -8; applyTilt(true); });
+
+function frame(time) {
+  if (!reduced) {
+    movers.forEach((mover) => {
+      const len = mover.path.getTotalLength();
+      if (!len) return;
+      const point = mover.path.getPointAtLength((((time * 0.00007) + mover.offset) % 1) * len);
+      mover.el.setAttribute("cx", point.x.toFixed(1));
+      mover.el.setAttribute("cy", point.y.toFixed(1));
+    });
+  }
+  requestAnimationFrame(frame);
+}
+render();
+requestAnimationFrame(frame);
+</script>
 </body>
 </html>
