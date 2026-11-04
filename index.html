@@ -1,347 +1,808 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLBB 101: Interactive Tactical Guide (v1.06)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        darkbg: '#0b0f19',
-                        cardbg: '#131c31',
-                        accent: '#6366f1',
-                        gold: '#f59e0b',
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .glass {
-            background: rgba(19, 28, 49, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glow-pulse {
-            animation: pulseGlow 2s infinite;
-        }
-        @keyframes pulseGlow {
-            0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.9)); }
-            100% { transform: scale(1); opacity: 0.8; }
-        }
-        @keyframes dashMove {
-            to { stroke-dashoffset: -20; }
-        }
-        .animate-dash {
-            stroke-dasharray: 6,6;
-            animation: dashMove 1s linear infinite;
-        }
-        ::-webkit-scrollbar {
-            height: 4px;
-            width: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #374151;
-            border-radius: 4px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MLBB 101 — Map & Hero Guide</title>
+  <meta name="description" content="Mobile Legends Bang Bang beginner guide: interactive map, lanes, objectives, and hero ultimate recognition cheat sheet." />
+  <style>
+    :root {
+      --bg: #0b0f1a;
+      --card: #141b2d;
+      --card2: #1a2338;
+      --blue: #3b82f6;
+      --blue-glow: #60a5fa;
+      --red: #ef4444;
+      --red-glow: #f87171;
+      --gold: #f59e0b;
+      --purple: #a855f7;
+      --green: #22c55e;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --border: #2a3548;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, var(--blue-glow), #c4b5fd, var(--red-glow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo span { font-weight: 500; opacity: 0.85; font-size: 0.9em; }
+    nav { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    nav button {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--muted);
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    nav button:hover { color: var(--text); background: var(--card2); }
+    nav button.active {
+      background: linear-gradient(135deg, #1e3a8a, #4c1d95);
+      color: white;
+      border-color: #6366f1;
+    }
+    main { max-width: 1280px; margin: 0 auto; padding: 1rem; }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    /* ===== MAP SECTION ===== */
+    .map-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .map-layout { grid-template-columns: 1fr; }
+    }
+    .map-controls {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      position: sticky;
+      top: 70px;
+    }
+    .map-controls h2 {
+      font-size: 1rem;
+      margin-bottom: 0.75rem;
+      color: var(--blue-glow);
+    }
+    .control-group { margin-bottom: 1rem; }
+    .control-group h3 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 0.4rem;
+    }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .map-btn {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.4rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .map-btn:hover { border-color: var(--blue); background: #1e293b; }
+    .map-btn.active {
+      background: linear-gradient(135deg, #1e40af, #7c3aed);
+      border-color: #818cf8;
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.35);
+    }
+    .map-btn.gold { border-color: #b45309; }
+    .map-btn.gold.active { background: linear-gradient(135deg, #b45309, #d97706); }
+    .map-btn.exp { border-color: #15803d; }
+    .map-btn.exp.active { background: linear-gradient(135deg, #15803d, #16a34a); }
+    .map-btn.mid { border-color: #7c3aed; }
+    .map-btn.mid.active { background: linear-gradient(135deg, #6d28d9, #a855f7); }
+    .map-btn.obj { border-color: #0e7490; }
+    .map-btn.obj.active { background: linear-gradient(135deg, #0e7490, #06b6d4); }
+
+    .info-box {
+      margin-top: 1rem;
+      padding: 0.85rem;
+      background: var(--card2);
+      border-radius: 10px;
+      border-left: 3px solid var(--blue);
+      font-size: 0.85rem;
+    }
+    .info-box h4 { color: var(--blue-glow); margin-bottom: 0.35rem; font-size: 0.95rem; }
+    .info-box p { color: var(--muted); margin: 0.25rem 0; }
+    .info-box ul { margin: 0.4rem 0 0 1.1rem; color: var(--muted); }
+    .info-box li { margin: 0.2rem 0; }
+
+    .map-wrapper {
+      position: relative;
+      background: #020617;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.45);
+      aspect-ratio: 1959 / 1080;
+      max-height: 75vh;
+    }
+    .map-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+      user-select: none;
+      pointer-events: none;
+    }
+    .map-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .map-overlay svg {
+      width: 100%;
+      height: 100%;
+    }
+    .highlight-path {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+      transition: opacity 0.3s;
+      filter: drop-shadow(0 0 6px currentColor);
+    }
+    .highlight-path.show { opacity: 0.9; }
+    .marker {
+      opacity: 0;
+      transition: opacity 0.25s, transform 0.25s;
+      transform-origin: center;
+    }
+    .marker.show { opacity: 1; }
+    .marker circle {
+      stroke-width: 2;
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+    .marker text {
+      font-size: 11px;
+      font-weight: 700;
+      fill: white;
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.75rem;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .legend span { display: inline-flex; align-items: center; gap: 0.3rem; }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* ===== HEROES SECTION ===== */
+    .heroes-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 1rem;
+      justify-content: space-between;
+    }
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      max-width: 360px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.6rem 1rem 0.6rem 2.4rem;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    .search-box input:focus { border-color: var(--blue); }
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.6;
+    }
+    .filter-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+    .chip {
+      background: var(--card2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover, .chip.active {
+      background: #1e3a8a;
+      border-color: #60a5fa;
+      color: white;
+    }
+    .heroes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 0.85rem;
+    }
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1rem;
+      transition: border-color 0.2s, transform 0.15s;
+      cursor: default;
+    }
+    .hero-card:hover {
+      border-color: #4f46e5;
+      transform: translateY(-2px);
+    }
+    .hero-card .name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .hero-card .ult {
+      color: var(--blue-glow);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .hero-card .recog {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+    }
+    .hero-card .recog strong { color: var(--text); }
+    .timing-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+    }
+    .timing-early { background: #14532d; color: #86efac; }
+    .timing-mid { background: #1e3a8a; color: #93c5fd; }
+    .timing-late { background: #4c1d95; color: #d8b4fe; }
+    .timing-mix { background: #422006; color: #fcd34d; }
+
+    /* ===== BASICS ===== */
+    .basics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+    .basic-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.1rem;
+    }
+    .basic-card h3 {
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .basic-card p, .basic-card ul { font-size: 0.9rem; color: var(--muted); }
+    .basic-card ul { margin-left: 1.1rem; margin-top: 0.4rem; }
+    .basic-card li { margin: 0.25rem 0; }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+    .hidden { display: none !important; }
+  </style>
 </head>
-<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
+<body>
+  <header>
+    <div class="logo">MLBB 101 <span>— Beginner Map & Hero Guide</span></div>
+    <nav>
+      <button class="nav-btn active" data-panel="map">🗺 Interactive Map</button>
+      <button class="nav-btn" data-panel="heroes">🦸 Heroes Cheat Sheet</button>
+      <button class="nav-btn" data-panel="basics">📘 Basics</button>
+    </nav>
+  </header>
 
-    <!-- Header -->
-    <header class="glass sticky top-0 z-50 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
-        <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg">
-                <span class="text-sm font-black text-white">101</span>
+  <main>
+    <!-- ==================== MAP PANEL ==================== -->
+    <section id="panel-map" class="panel active">
+      <div class="map-layout">
+        <aside class="map-controls">
+          <h2>Map Explorer</h2>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:0.9rem;">Tap a button to highlight lanes, towers & objectives on the map.</p>
+
+          <div class="control-group">
+            <h3>Lanes</h3>
+            <div class="btn-row">
+              <button class="map-btn gold" data-layer="gold">Gold Lane</button>
+              <button class="map-btn exp" data-layer="exp">EXP Lane</button>
+              <button class="map-btn mid" data-layer="mid">Mid Lane</button>
+              <button class="map-btn" data-layer="alllanes">All Lanes</button>
             </div>
-            <div>
-                <h1 class="font-bold text-sm leading-tight text-white">Land of Dawn: MLBB 101</h1>
-                <p class="text-[10px] text-indigo-300">Tactical Map & Lesson Guide</p>
+          </div>
+
+          <div class="control-group">
+            <h3>Turrets & Bases</h3>
+            <div class="btn-row">
+              <button class="map-btn" data-layer="turrets-blue">Blue Turrets</button>
+              <button class="map-btn" data-layer="turrets-red">Red Turrets</button>
+              <button class="map-btn" data-layer="turrets-all">All 18 Turrets</button>
+              <button class="map-btn" data-layer="bases">Bases / Crystal</button>
             </div>
+          </div>
+
+          <div class="control-group">
+            <h3>Objectives & Buffs</h3>
+            <div class="btn-row">
+              <button class="map-btn obj" data-layer="turtle">Turtle Pit</button>
+              <button class="map-btn obj" data-layer="lord">Lord Pit</button>
+              <button class="map-btn" data-layer="purple">Purple Buff</button>
+              <button class="map-btn" data-layer="orange">Orange Buff</button>
+              <button class="map-btn" data-layer="buffs">All Buffs</button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <h3>Quick Clear</h3>
+            <div class="btn-row">
+              <button class="map-btn" data-layer="clear" style="border-color:#64748b;">Clear Highlights</button>
+            </div>
+          </div>
+
+          <div class="info-box" id="map-info">
+            <h4>How to use</h4>
+            <p>Select any button to draw the corresponding path or markers on the map. Gold lane is usually the bottom side lane (bonus gold for Marksman). EXP is the opposite side lane (bonus EXP for Fighter).</p>
+            <p style="margin-top:0.5rem;">First Turtle always spawns near the EXP side of the river.</p>
+          </div>
+        </aside>
+
+        <div>
+          <div class="map-wrapper" id="map-container">
+            <img src="mlbb_map.webp" alt="Mobile Legends Bang Bang map" id="map-img" />
+            <div class="map-overlay">
+              <svg id="map-svg" viewBox="0 0 1959 1080" preserveAspectRatio="xMidYMid meet">
+                <!-- Lanes (approximate paths based on typical orientation: Blue bottom-left, Red top-right) -->
+                <!-- Gold Lane (bottom-ish path for blue) -->
+                <path id="path-gold" class="highlight-path" stroke="#f59e0b"
+                  d="M 280 820 L 520 780 L 780 720 L 1050 680 L 1320 620 L 1580 540 L 1720 420" />
+                <!-- EXP Lane (top-ish) -->
+                <path id="path-exp" class="highlight-path" stroke="#22c55e"
+                  d="M 320 280 L 550 240 L 820 220 L 1100 240 L 1380 300 L 1620 380 L 1750 480" />
+                <!-- Mid Lane -->
+                <path id="path-mid" class="highlight-path" stroke="#a855f7"
+                  d="M 380 620 L 620 560 L 860 500 L 1100 460 L 1340 420 L 1580 380" />
+
+                <!-- Blue Turrets (approx positions) -->
+                <g id="markers-turrets-blue" class="marker" style="color:#3b82f6">
+                  <!-- Gold outer/inner/base -->
+                  <circle cx="420" cy="790" r="14" fill="#1e40af" stroke="#60a5fa"/><text x="420" y="790">G1</text>
+                  <circle cx="620" cy="740" r="12" fill="#1e40af" stroke="#60a5fa"/><text x="620" y="740">G2</text>
+                  <circle cx="780" cy="700" r="12" fill="#1e40af" stroke="#60a5fa"/><text x="780" y="700">G3</text>
+                  <!-- Mid -->
+                  <circle cx="480" cy="580" r="14" fill="#1e40af" stroke="#60a5fa"/><text x="480" y="580">M1</text>
+                  <circle cx="680" cy="520" r="12" fill="#1e40af" stroke="#60a5fa"/><text x="680" y="520">M2</text>
+                  <circle cx="860" cy="480" r="12" fill="#1e40af" stroke="#60a5fa"/><text x="860" y="480">M3</text>
+                  <!-- EXP -->
+                  <circle cx="450" cy="320" r="14" fill="#1e40af" stroke="#60a5fa"/><text x="450" y="320">E1</text>
+                  <circle cx="650" cy="280" r="12" fill="#1e40af" stroke="#60a5fa"/><text x="650" y="280">E2</text>
+                  <circle cx="820" cy="300" r="12" fill="#1e40af" stroke="#60a5fa"/><text x="820" y="300">E3</text>
+                </g>
+
+                <!-- Red Turrets -->
+                <g id="markers-turrets-red" class="marker" style="color:#ef4444">
+                  <circle cx="1550" cy="300" r="14" fill="#991b1b" stroke="#f87171"/><text x="1550" y="300">G1</text>
+                  <circle cx="1380" cy="340" r="12" fill="#991b1b" stroke="#f87171"/><text x="1380" y="340">G2</text>
+                  <circle cx="1220" cy="380" r="12" fill="#991b1b" stroke="#f87171"/><text x="1220" y="380">G3</text>
+                  <circle cx="1520" cy="480" r="14" fill="#991b1b" stroke="#f87171"/><text x="1520" y="480">M1</text>
+                  <circle cx="1340" cy="500" r="12" fill="#991b1b" stroke="#f87171"/><text x="1340" y="500">M2</text>
+                  <circle cx="1160" cy="520" r="12" fill="#991b1b" stroke="#f87171"/><text x="1160" y="520">M3</text>
+                  <circle cx="1580" cy="620" r="14" fill="#991b1b" stroke="#f87171"/><text x="1580" y="620">E1</text>
+                  <circle cx="1400" cy="660" r="12" fill="#991b1b" stroke="#f87171"/><text x="1400" y="660">E2</text>
+                  <circle cx="1240" cy="680" r="12" fill="#991b1b" stroke="#f87171"/><text x="1240" y="680">E3</text>
+                </g>
+
+                <!-- Bases -->
+                <g id="markers-bases" class="marker">
+                  <circle cx="280" cy="780" r="28" fill="none" stroke="#3b82f6" stroke-width="4"/><text x="280" y="780" style="font-size:13px;fill:#93c5fd">BLUE</text>
+                  <circle cx="1680" cy="300" r="28" fill="none" stroke="#ef4444" stroke-width="4"/><text x="1680" y="300" style="font-size:13px;fill:#fca5a5">RED</text>
+                </g>
+
+                <!-- Turtle (river pits - two main) -->
+                <g id="markers-turtle" class="marker" style="color:#22d3ee">
+                  <circle cx="720" cy="420" r="22" fill="#0e7490" stroke="#67e8f9" stroke-width="3"/><text x="720" y="420" style="font-size:10px">🐢</text>
+                  <circle cx="1180" cy="580" r="22" fill="#0e7490" stroke="#67e8f9" stroke-width="3"/><text x="1180" y="580" style="font-size:10px">🐢</text>
+                </g>
+
+                <!-- Lord (usually central river later) -->
+                <g id="markers-lord" class="marker" style="color:#f59e0b">
+                  <circle cx="980" cy="500" r="26" fill="#92400e" stroke="#fbbf24" stroke-width="3"/><text x="980" y="500" style="font-size:12px">👑</text>
+                </g>
+
+                <!-- Purple Buffs (approx jungle) -->
+                <g id="markers-purple" class="marker" style="color:#a855f7">
+                  <circle cx="520" cy="480" r="16" fill="#6b21a8" stroke="#c084fc"/><text x="520" y="480" style="font-size:9px">P</text>
+                  <circle cx="1450" cy="420" r="16" fill="#6b21a8" stroke="#c084fc"/><text x="1450" y="420" style="font-size:9px">P</text>
+                </g>
+
+                <!-- Orange Buffs -->
+                <g id="markers-orange" class="marker" style="color:#f97316">
+                  <circle cx="580" cy="620" r="16" fill="#9a3412" stroke="#fb923c"/><text x="580" y="620" style="font-size:9px">O</text>
+                  <circle cx="1380" cy="560" r="16" fill="#9a3412" stroke="#fb923c"/><text x="1380" y="560" style="font-size:9px">O</text>
+                </g>
+              </svg>
+            </div>
+          </div>
+          <div class="legend">
+            <span><span class="dot" style="background:#f59e0b"></span> Gold Lane</span>
+            <span><span class="dot" style="background:#22c55e"></span> EXP Lane</span>
+            <span><span class="dot" style="background:#a855f7"></span> Mid Lane</span>
+            <span><span class="dot" style="background:#3b82f6"></span> Blue Turrets</span>
+            <span><span class="dot" style="background:#ef4444"></span> Red Turrets</span>
+            <span><span class="dot" style="background:#22d3ee"></span> Turtle</span>
+            <span><span class="dot" style="background:#a855f7"></span> Purple Buff</span>
+            <span><span class="dot" style="background:#f97316"></span> Orange Buff</span>
+          </div>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem;">Note: Marker positions are approximate for learning. Exact locations shift slightly with map variants (S42+). First Turtle always appears on the EXP side of the river.</p>
         </div>
-        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> v1.06 Live
-        </span>
-    </header>
+      </div>
+    </section>
 
-    <main class="max-w-md mx-auto px-4 pt-4 space-y-4">
-
-        <!-- Horizontal Scrolling Menu Bar (Just like the video interface) -->
-        <div class="flex space-x-2 overflow-x-auto pb-2 pt-1 no-scrollbar" id="menu-bar">
-            <button onclick="selectLesson('gold')" id="menu-gold" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shrink-0 shadow transition">Gold</button>
-            <button onclick="selectLesson('exp')" id="menu-exp" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">EXP</button>
-            <button onclick="selectLesson('mid')" id="menu-mid" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Mid</button>
-            <button onclick="selectLesson('roles')" id="menu-roles" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Roles</button>
-            <button onclick="selectLesson('bluetank')" id="menu-bluetank" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Blue Turrets</button>
-            <button onclick="selectLesson('redtank')" id="menu-redtank" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Red Turrets</button>
-            <button onclick="selectLesson('turtle')" id="menu-turtle" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Turtle</button>
-            <button onclick="selectLesson('lord')" id="menu-lord" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Lord</button>
-            <button onclick="selectLesson('orange')" id="menu-orange" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Orange Buff</button>
-            <button onclick="selectLesson('purple')" id="menu-purple" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Purple Buff</button>
+    <!-- ==================== HEROES PANEL ==================== -->
+    <section id="panel-heroes" class="panel">
+      <div class="heroes-header">
+        <div>
+          <h2 style="font-size:1.25rem;margin-bottom:0.2rem;">Hero Ultimate Recognition</h2>
+          <p style="font-size:0.85rem;color:var(--muted);">Spectator cheat sheet — learn how to spot key ultimates during matches (especially useful for MPL / ranked watching).</p>
         </div>
-
-        <!-- 3D Interactive Map Widget -->
-        <div class="glass rounded-2xl p-3 shadow-xl space-y-3">
-            <div class="flex items-center justify-between px-1">
-                <span id="lesson-counter" class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Lesson 1 / 10</span>
-                <button onclick="resetMapView()" class="text-[10px] text-slate-400 hover:text-white bg-slate-800/80 px-2 py-0.5 rounded-md transition">Reset View 🔄</button>
-            </div>
-
-            <!-- Map Container with 3D Map Image and Locked Isometric SVG Overlay -->
-            <div class="relative w-full aspect-[1/1] rounded-xl overflow-hidden border border-slate-800 shadow-inner bg-slate-950 flex items-center justify-center">
-                <!-- Background 3D Isometric Map Image -->
-                <img src="1000433062.webp" alt="Land of Dawn 3D Map" class="absolute inset-0 w-full h-full object-cover opacity-95">
-
-                <!-- Mathematically Aligned Isometric SVG Overlay -->
-                <svg viewBox="0 0 500 500" class="absolute inset-0 w-full h-full pointer-events-none z-10">
-                    <defs>
-                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                            <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
-                        </marker>
-                    </defs>
-
-                    <!-- 1. GOLD LANE -->
-                    <g id="layer-gold">
-                        <path d="M 120,380 L 250,75 L 420,225" fill="none" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                        <circle cx="120" cy="380" r="10" fill="#f59e0b" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="120" y="383" font-size="9" fill="#000" font-weight="bold" text-anchor="middle">1</text>
-                        <circle cx="420" cy="225" r="10" fill="#ef4444" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="420" y="228" font-size="9" fill="#fff" font-weight="bold" text-anchor="middle">2</text>
-                    </g>
-
-                    <!-- 2. EXP LANE -->
-                    <g id="layer-exp" class="hidden">
-                        <path d="M 120,380 L 75,235 L 380,100" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                        <circle cx="120" cy="380" r="10" fill="#8b5cf6" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="120" y="383" font-size="9" fill="#fff" font-weight="bold" text-anchor="middle">1</text>
-                        <circle cx="380" cy="100" r="10" fill="#ef4444" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="380" y="103" font-size="9" fill="#fff" font-weight="bold" text-anchor="middle">2</text>
-                    </g>
-
-                    <!-- 3. MID LANE -->
-                    <g id="layer-mid" class="hidden">
-                        <path d="M 120,380 L 250,250 L 380,100" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                        <circle cx="250" cy="250" r="14" fill="#ec4899" fill-opacity="0.8" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="250" y="254" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Mid</text>
-                    </g>
-
-                    <!-- 4. ROLES OVERVIEW -->
-                    <g id="layer-roles" class="hidden">
-                        <path d="M 120,380 L 250,75 L 420,225" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="4"/>
-                        <path d="M 120,380 L 75,235 L 380,100" fill="none" stroke="#14b8a6" stroke-width="3" stroke-dasharray="4"/>
-                        <path d="M 120,380 L 250,250 L 380,100" fill="none" stroke="#ec4899" stroke-width="3" stroke-dasharray="4"/>
-                    </g>
-
-                    <!-- 5. BLUE TURRETS (9 Towers) -->
-                    <g id="layer-bluetank" class="hidden">
-                        <!-- Gold Lane Turrets -->
-                        <rect x="235" y="100" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="290" y="150" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="350" y="195" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <!-- Mid Lane Turrets -->
-                        <rect x="190" y="180" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="220" y="220" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <!-- EXP Lane Turrets -->
-                        <rect x="115" y="250" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="145" y="300" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="180" y="340" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <!-- Base Turret -->
-                        <rect x="105" y="365" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2" class="glow-pulse"/>
-                    </g>
-
-                    <!-- 6. RED TURRETS (9 Towers) -->
-                    <g id="layer-redtank" class="hidden">
-                        <rect x="260" y="380" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="210" y="330" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="160" y="290" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="310" y="300" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="280" y="260" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="380" y="225" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="350" y="180" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="310" y="140" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        <rect x="395" y="115" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2" class="glow-pulse"/>
-                    </g>
-
-                    <!-- 7. TURTLE -->
-                    <g id="layer-turtle" class="hidden">
-                        <circle cx="210" cy="165" r="16" fill="#10b981" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="210" y="169" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Turtle</text>
-                    </g>
-
-                    <!-- 8. LORD -->
-                    <g id="layer-lord" class="hidden">
-                        <circle cx="250" cy="250" r="18" fill="#eab308" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="250" y="254" font-size="8" fill="#000" font-weight="bold" text-anchor="middle">Lord</text>
-                    </g>
-
-                    <!-- 9. ORANGE BUFF -->
-                    <g id="layer-orange" class="hidden">
-                        <circle cx="180" cy="190" r="14" fill="#f97316" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="180" y="193" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
-                        <circle cx="320" cy="310" r="14" fill="#f97316" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="320" y="313" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
-                    </g>
-
-                    <!-- 10. PURPLE BUFF -->
-                    <g id="layer-purple" class="hidden">
-                        <circle cx="170" cy="300" r="14" fill="#a855f7" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="170" y="303" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
-                        <circle cx="330" cy="200" r="14" fill="#a855f7" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
-                        <text x="330" y="203" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
-                    </g>
-                </svg>
-            </div>
+        <div class="search-box">
+          <input type="text" id="hero-search" placeholder="Search hero name..." />
         </div>
+      </div>
+      <div class="filter-chips" id="timing-filters">
+        <button class="chip active" data-timing="all">All</button>
+        <button class="chip" data-timing="Early">Early</button>
+        <button class="chip" data-timing="Mid">Mid</button>
+        <button class="chip" data-timing="Late">Late</button>
+      </div>
+      <div style="margin:0.8rem 0 1rem;font-size:0.8rem;color:var(--muted);">
+        Power Timing legend:
+        <span class="timing-badge timing-early" style="margin-left:0.4rem">Early</span> ~0–8 min ·
+        <span class="timing-badge timing-mid">Mid</span> ~8–15 min ·
+        <span class="timing-badge timing-late">Late</span> 15+ min
+      </div>
+      <div class="heroes-grid" id="heroes-grid"></div>
+    </section>
 
-        <!-- Dynamic Lesson Explanation Box (Matches video bottom card) -->
-        <div class="glass rounded-2xl p-4 space-y-3 shadow-xl">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                <span id="lesson-title" class="font-extrabold text-sm uppercase tracking-wide text-indigo-400">Gold Lane</span>
-                <span id="lesson-index" class="text-xs text-slate-400 font-semibold">1 / 10</span>
-            </div>
-            <p id="lesson-desc" class="text-xs text-slate-200 leading-relaxed">
-                A line from point 1, the blue side, to point 2, the red base. This is the marksman's lane. Minions on this lane pay bonus gold. The cannon in the early waves is worth even more—last-hit it.
-            </p>
-            <div class="flex justify-between pt-2">
-                <button onclick="prevLesson()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition">Back</button>
-                <button onclick="nextLesson()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Next lesson</button>
-            </div>
+    <!-- ==================== BASICS PANEL ==================== -->
+    <section id="panel-basics" class="panel">
+      <h2 style="margin-bottom:1rem;">MLBB 101 — Core Concepts</h2>
+      <div class="basics-grid">
+        <div class="basic-card">
+          <h3>🛡 Roles (6)</h3>
+          <ul>
+            <li><strong>Tank</strong> — initiate, soak damage, CC (usually Roam)</li>
+            <li><strong>Fighter</strong> — durable damage, often EXP lane</li>
+            <li><strong>Assassin</strong> — burst, high mobility (often Jungle)</li>
+            <li><strong>Mage</strong> — magic damage & control (usually Mid)</li>
+            <li><strong>Marksman</strong> — physical DPS, scales hard (Gold lane)</li>
+            <li><strong>Support</strong> — heal / shield / utility (Roam)</li>
+          </ul>
         </div>
+        <div class="basic-card">
+          <h3>📍 Positions (5)</h3>
+          <ul>
+            <li><strong>Gold Lane</strong> — Marksman + often Roamer early. Bonus gold from siege minions.</li>
+            <li><strong>EXP Lane</strong> — Solo Fighter / Tank. Bonus experience. Near first Turtle.</li>
+            <li><strong>Mid Lane</strong> — Mage. Shortest path, fast rotate to both sides.</li>
+            <li><strong>Jungle</strong> — Assassin / Fighter with Retribution. Farms camps + objectives.</li>
+            <li><strong>Roam</strong> — Tank / Support. No lane farm; moves with fights, vision, protect.</li>
+          </ul>
+        </div>
+        <div class="basic-card">
+          <h3>🐢 Key Objectives</h3>
+          <ul>
+            <li><strong>Turtle</strong> — Spawns ~2:00 near EXP side. Team gold + EXP. Stops after ~8 min.</li>
+            <li><strong>Lord</strong> — Spawns ~8:00. Pushes a lane hard for the team that kills it.</li>
+            <li><strong>Purple Buff</strong> — CDR + mana/energy. Great for mages & skill-heavy heroes.</li>
+            <li><strong>Orange (Red) Buff</strong> — Extra damage + slow on basic attacks. Preferred by ADCs & junglers.</li>
+          </ul>
+        </div>
+        <div class="basic-card">
+          <h3>🏰 Turrets</h3>
+          <p>Each side has <strong>9 turrets</strong> (3 per lane: Outer → Inner → Base) + the base Crystal.</p>
+          <ul>
+            <li>Outer turrets fall first → opens jungle & river.</li>
+            <li>Destroying turrets gives gold (especially valuable in Golden Turret map variants).</li>
+            <li>Base Crystal destruction = victory.</li>
+          </ul>
+        </div>
+        <div class="basic-card">
+          <h3>⏱ Power Timing (from cheat sheet)</h3>
+          <ul>
+            <li><strong>Early</strong> (0–8 min) — Can pressure early, look for kills/objectives.</li>
+            <li><strong>Mid</strong> (8–15 min) — Strong around core items / levels 8–12.</li>
+            <li><strong>Late</strong> (15+ min) — Scales into teamfight monster after full items.</li>
+          </ul>
+          <p style="margin-top:0.5rem;">Many heroes are “Mid → Late”. Knowing when an ultimate becomes scary helps you respect it in fights.</p>
+        </div>
+        <div class="basic-card">
+          <h3>👀 Spectator Tip</h3>
+          <p>When watching MPL or ranked, focus on:</p>
+          <ul>
+            <li>Who has ultimate ready (the visual cues in the cheat sheet).</li>
+            <li>Who is near Turtle / Lord first.</li>
+            <li>Gold difference on the Gold laner — if far ahead, protect them.</li>
+            <li>Roam position — good roamers create picks before objectives.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    </main>
+  <footer>
+    MLBB 101 interactive guide · Built for learning lanes, objectives & ultimate recognition · Map markers are approximate educational overlays · Not affiliated with Moonton
+  </footer>
 
-    <!-- Script Engine -->
-    <script>
-        const lessons = [
-            {
-                id: 'gold',
-                title: 'Gold Lane',
-                counter: '1 / 10',
-                desc: 'A line from point 1, the blue side, to point 2, the red base. This is the marksman\'s lane. Minions on this lane pay bonus gold. The cannon in the early waves is worth even more—last-hit it.'
-            },
-            {
-                id: 'exp',
-                title: 'EXP Lane',
-                counter: '2 / 10',
-                desc: 'Point 1 to point 2 along the fighter\'s lane. Bonus experience, not bonus gold. You should hit level 4 before the gold laner. That spike is your first fight.'
-            },
-            {
-                id: 'mid',
-                title: 'Mid Lane',
-                counter: '3 / 10',
-                desc: 'The short diagonal. Mages clear it and leave. Mid is the closest hero to both river pits. A good mid is at the first Turtle. Clear the wave before you roam, or your tower eats damage.'
-            },
-            {
-                id: 'roles',
-                title: 'Who Goes Where',
-                counter: '4 / 10',
-                desc: 'Five heroes, three lanes, two jungles. The lanes are the pins. The pins are the buffs. Gold, the amber line: marksman. EXP, the teal line: fighter. Mid, the pale line: mage.'
-            },
-            {
-                id: 'bluetank',
-                title: 'Blue Turrets',
-                counter: '5 / 10',
-                desc: 'The nine blue towers, counting out from the bottom-left base. Each lane has an outer, an inner and a base tower. That is your shield.'
-            },
-            {
-                id: 'redtank',
-                title: 'Red Turrets',
-                counter: '6 / 10',
-                desc: 'The nine red towers, wrapped around the top-right base. Red\'s Gold towers run down the right edge. EXP towers sit on the left.'
-            },
-            {
-                id: 'turtle',
-                title: 'Turtle',
-                counter: '7 / 10',
-                desc: 'The lower river pit. Spawns early, grants global gold and shield. Contesting this determines early momentum.'
-            },
-            {
-                id: 'lord',
-                title: 'Lord',
-                counter: '8 / 10',
-                desc: 'The upper river pit. From 8:00 this is the objective that ends games. Slaying the Lord sends it down a lane to hit towers. Someone still has to push with it.'
-            },
-            {
-                id: 'orange',
-                title: 'Orange Buff',
-                counter: '9 / 10',
-                desc: 'For both camps: Damage, and a slow on your attacks. Blue\'s camp is in the lower jungle. Red\'s is in the upper jungle, toward the EXP lane. This is the buff the marksman takes once they are farmed.'
-            },
-            {
-                id: 'purple',
-                title: 'Purple Buff',
-                counter: '10 / 10',
-                desc: 'Energy and cooldown reduction. Essential for assassins and mana-hungry mages to spam skills continuously without running dry.'
-            }
-        ];
+  <script>
+    // ========== NAV ==========
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + btn.dataset.panel).classList.add('active');
+      });
+    });
 
-        let currentIndex = 0;
-        const keys = ['gold', 'exp', 'mid', 'roles', 'bluetank', 'redtank', 'turtle', 'lord', 'orange', 'purple'];
+    // ========== MAP LAYERS ==========
+    const infoData = {
+      gold: {
+        title: "Gold Lane",
+        html: `<p>Usually the bottom side lane (opposite first Turtle). Marksman farms here for bonus gold from siege minions in the early waves.</p>
+               <ul><li>Role: Marksman (sometimes Harith / special mages)</li><li>Roamer often starts here to protect</li><li>Goal: scale into late-game DPS</li></ul>`
+      },
+      exp: {
+        title: "EXP Lane",
+        html: `<p>The side lane closest to the first Turtle spawn. Solo lane that grants bonus experience.</p>
+               <ul><li>Role: Fighter / durable Tank</li><li>Level 4 power spike is important</li><li>Rotate to first Turtle fights</li></ul>`
+      },
+      mid: {
+        title: "Mid Lane",
+        html: `<p>Central shortest path between bases. Mage clears waves fast then rotates to sides or objectives.</p>
+               <ul><li>Role: Mage</li><li>High map impact through rotations</li><li>Controls access to both jungles</li></ul>`
+      },
+      alllanes: {
+        title: "All Three Lanes",
+        html: `<p>Gold (bonus gold) · Mid (rotations) · EXP (bonus EXP + near Turtle).</p><p>Minions spawn in all three. Pushing a lane opens the map and creates pressure.</p>`
+      },
+      "turrets-blue": {
+        title: "Blue Side Turrets (9)",
+        html: `<p>3 per lane: Outer (G1/M1/E1) → Inner → Base turret. Protect your own, take enemy’s to open space.</p>`
+      },
+      "turrets-red": {
+        title: "Red Side Turrets (9)",
+        html: `<p>Same structure on the opposite side. Destroying outer turrets first is key to controlling river and jungle.</p>`
+      },
+      "turrets-all": {
+        title: "All Turrets (18)",
+        html: `<p>Each team has 9 turrets. Outer → Inner → Base. Crystal sits behind the base turrets. Taking towers = gold + map control.</p>`
+      },
+      bases: {
+        title: "Bases & Crystal",
+        html: `<p>Blue base (bottom-left area) and Red base (top-right). Destroy the enemy Crystal (inside the base) to win the match.</p>`
+      },
+      turtle: {
+        title: "Turtle",
+        html: `<p>Spawns at ~2:00 near the EXP side of the river. Respawn ~2 min until ~8:00. Team gold + EXP reward. First objective of the game.</p>
+               <ul><li>Jungler Retribution is key for secure</li><li>Whole team should rotate if contestable</li></ul>`
+      },
+      lord: {
+        title: "Lord",
+        html: `<p>Spawns ~8:00 in the central river area. Killing it summons a powerful minion that pushes a lane hard. Game-changing objective.</p>`
+      },
+      purple: {
+        title: "Purple Buff",
+        html: `<p>Gives Cooldown Reduction + Mana/Energy regen. Usually taken by mages, skill-spamming fighters or the jungler early.</p>`
+      },
+      orange: {
+        title: "Orange (Red) Buff",
+        html: `<p>Bonus damage + slow on basic attacks. Preferred by Marksmen and physical junglers. Helps in duels and objective takes.</p>`
+      },
+      buffs: {
+        title: "Jungle Buffs",
+        html: `<p>Purple = CDR/Mana · Orange = Damage/Slow. Each jungle has both. Jungler starts one of them around 0:20–0:30.</p>`
+      },
+      clear: {
+        title: "Cleared",
+        html: `<p>Select any lane, turret group or objective above to highlight it on the map again.</p>`
+      }
+    };
 
-        function selectLesson(key) {
-            currentIndex = keys.indexOf(key);
-            if (currentIndex === -1) currentIndex = 0;
-            updateView();
+    function clearAllHighlights() {
+      document.querySelectorAll('.highlight-path').forEach(p => p.classList.remove('show'));
+      document.querySelectorAll('.marker').forEach(m => m.classList.remove('show'));
+      document.querySelectorAll('.map-btn').forEach(b => b.classList.remove('active'));
+    }
+
+    function showInfo(key) {
+      const box = document.getElementById('map-info');
+      const data = infoData[key] || infoData.clear;
+      box.innerHTML = `<h4>${data.title}</h4>${data.html}`;
+    }
+
+    document.querySelectorAll('.map-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const layer = btn.dataset.layer;
+        clearAllHighlights();
+        if (layer === 'clear') {
+          showInfo('clear');
+          return;
         }
+        btn.classList.add('active');
 
-        function nextLesson() {
-            currentIndex = (currentIndex + 1) % lessons.length;
-            updateView();
+        if (layer === 'gold') {
+          document.getElementById('path-gold').classList.add('show');
+        } else if (layer === 'exp') {
+          document.getElementById('path-exp').classList.add('show');
+        } else if (layer === 'mid') {
+          document.getElementById('path-mid').classList.add('show');
+        } else if (layer === 'alllanes') {
+          document.getElementById('path-gold').classList.add('show');
+          document.getElementById('path-exp').classList.add('show');
+          document.getElementById('path-mid').classList.add('show');
+        } else if (layer === 'turrets-blue') {
+          document.getElementById('markers-turrets-blue').classList.add('show');
+        } else if (layer === 'turrets-red') {
+          document.getElementById('markers-turrets-red').classList.add('show');
+        } else if (layer === 'turrets-all') {
+          document.getElementById('markers-turrets-blue').classList.add('show');
+          document.getElementById('markers-turrets-red').classList.add('show');
+        } else if (layer === 'bases') {
+          document.getElementById('markers-bases').classList.add('show');
+        } else if (layer === 'turtle') {
+          document.getElementById('markers-turtle').classList.add('show');
+        } else if (layer === 'lord') {
+          document.getElementById('markers-lord').classList.add('show');
+        } else if (layer === 'purple') {
+          document.getElementById('markers-purple').classList.add('show');
+        } else if (layer === 'orange') {
+          document.getElementById('markers-orange').classList.add('show');
+        } else if (layer === 'buffs') {
+          document.getElementById('markers-purple').classList.add('show');
+          document.getElementById('markers-orange').classList.add('show');
         }
+        showInfo(layer);
+      });
+    });
 
-        function prevLesson() {
-            currentIndex = (currentIndex - 1 + lessons.length) % lessons.length;
-            updateView();
-        }
+    // ========== HEROES DATA ==========
+    const heroes = [
+      { n:1, name:"Claude", ult:"Blazing Duet", recog:"Circular rapid-fire", timing:"Mid → Late" },
+      { n:2, name:"Zhuxin", ult:"Crimson Beacon", recog:"Magical field / floating", timing:"Mid → Late" },
+      { n:3, name:"Suyou", ult:"Evil Queller", recog:"Charged arrow / slash", timing:"Early → Mid → Late" },
+      { n:4, name:"Leomord", ult:"Phantom Steed", recog:"Ghost horse", timing:"Mid → Late" },
+      { n:5, name:"Harith", ult:"Zaman Force", recog:"Glowing field + dashes", timing:"Mid → Late" },
+      { n:6, name:"Gloo", ult:"Grab", recog:"Sticks onto enemy", timing:"Early → Mid" },
+      { n:7, name:"Valentina", ult:"I Am You", recog:"Copies enemy Ultimate", timing:"Mid → Late" },
+      { n:8, name:"Khaleed", ult:"Raging Sandstorm", recog:"Rides sandstorm", timing:"Early → Mid" },
+      { n:9, name:"Phoveus", ult:"Infernal Pursuit", recog:"Repeated jumps/slams", timing:"Mid → Late" },
+      { n:10, name:"Yve", ult:"Real World Manipulation", recog:"Giant Starfield/grid", timing:"Mid → Late" },
+      { n:11, name:"Chou", ult:"The Way of Dragon", recog:"Kick → enemy flies", timing:"Early → Mid → Late" },
+      { n:12, name:"Guinevere", ult:"Violet Requiem", recog:"Repeated airborne", timing:"Mid" },
+      { n:13, name:"Moskov", ult:"Spear of Destruction", recog:"Giant spear", timing:"Late" },
+      { n:14, name:"Yi Sun-shin", ult:"Mountain Shocker", recog:"Map-wide cannon strikes", timing:"Mid → Late" },
+      { n:15, name:"Harley", ult:"Deadly Magic", recog:"Magic ring/mark", timing:"Early → Mid" },
+      { n:16, name:"Uranus", ult:"Consecration", recog:"Huge sustain/buff", timing:"Mid → Late" },
+      { n:17, name:"Gatotkaca", ult:"Avatar of Guardian", recog:"Jumps from sky", timing:"Mid → Late" },
+      { n:18, name:"Marcel", ult:"Golden Hour", recog:"Time/freeze effect", timing:"Mid → Late" },
+      { n:19, name:"Zetian", ult:"Fury of Phoenix", recog:"Global effect", timing:"Mid → Late" },
+      { n:20, name:"Kalea", ult:"Tsunami Slam", recog:"Grab → slam", timing:"Early → Mid" },
+      { n:21, name:"Franco", ult:"Iron Hook", recog:"Hook → pull", timing:"Early → Mid → Late" },
+      { n:22, name:"Kaja", ult:"Divine Judgment", recog:"Tether → drag enemy", timing:"Mid" },
+      { n:23, name:"Minsitthar", ult:"King's Calling", recog:"Pull / area control", timing:"Mid → Late" },
+      { n:24, name:"Atlas", ult:"Fatal Links", recog:"Chains → pull enemies together", timing:"Mid → Late" },
+      { n:25, name:"Minotaur", ult:"Minoan Fury", recog:"Ground slam → airborne", timing:"Mid → Late" },
+      { n:26, name:"Obsidia", ult:"Ultimate", recog:"Dark/abyssal attacks", timing:"Mid → Late" },
+      { n:27, name:"Eudora", ult:"Thunder's Wrath", recog:"Massive lightning strike", timing:"Early → Mid" },
+      { n:28, name:"Nolan", ult:"Fracture", recog:"Fast dashes + Rifts", timing:"Early → Mid" },
+      { n:29, name:"Carmilla", ult:"Curse of Blood", recog:"Red links between enemies", timing:"Mid → Late" },
+      { n:30, name:"Bruno", ult:"Worldie", recog:"Ball bounces between enemies", timing:"Mid → Late" },
+      { n:31, name:"Fanny", ult:"Cut Throat", recog:"Cable movement + huge slash", timing:"Early → Mid → Late" },
+      { n:32, name:"Selena", ult:"Primal Darkness", recog:"Switches form", timing:"Early → Mid" }
+    ];
 
-        function resetMapView() {
-            updateView();
-        }
+    function timingClass(t) {
+      if (t.includes("Early") && t.includes("Late")) return "timing-mix";
+      if (t.startsWith("Early")) return "timing-early";
+      if (t === "Late" || t.startsWith("Late")) return "timing-late";
+      if (t.includes("Mid")) return "timing-mid";
+      return "timing-mix";
+    }
 
-        function updateView() {
-            const lesson = lessons[currentIndex];
-            const activeKey = keys[currentIndex];
+    function renderHeroes(filterTiming = "all", search = "") {
+      const grid = document.getElementById("heroes-grid");
+      const q = search.toLowerCase().trim();
+      const filtered = heroes.filter(h => {
+        const matchSearch = !q || h.name.toLowerCase().includes(q) || h.ult.toLowerCase().includes(q) || h.recog.toLowerCase().includes(q);
+        const matchTiming = filterTiming === "all" || h.timing.includes(filterTiming);
+        return matchSearch && matchTiming;
+      });
+      grid.innerHTML = filtered.map(h => `
+        <div class="hero-card">
+          <div class="name">#${h.n} ${h.name}</div>
+          <div class="ult">${h.ult}</div>
+          <div class="recog"><strong>Recognize by:</strong> ${h.recog}</div>
+          <span class="timing-badge ${timingClass(h.timing)}">${h.timing}</span>
+        </div>
+      `).join("") || `<p style="color:var(--muted);grid-column:1/-1;">No heroes match your filter.</p>`;
+    }
 
-            // Update text content
-            document.getElementById('lesson-title').innerText = lesson.title;
-            document.getElementById('lesson-counter').innerText = `Lesson ${lesson.counter}`;
-            document.getElementById('lesson-index').innerText = lesson.counter;
-            document.getElementById('lesson-desc').innerText = lesson.desc;
+    renderHeroes();
 
-            // Highlight menu button
-            keys.forEach(k => {
-                const btn = document.getElementById(`menu-${k}`);
-                if (btn) {
-                    if (k === activeKey) {
-                        btn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shrink-0 shadow transition";
-                        btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                    } else {
-                        btn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition";
-                    }
-                }
-            });
+    document.getElementById("hero-search").addEventListener("input", e => {
+      const activeChip = document.querySelector("#timing-filters .chip.active");
+      renderHeroes(activeChip ? activeChip.dataset.timing : "all", e.target.value);
+    });
 
-            // Toggle SVG layers
-            keys.forEach(k => {
-                const layer = document.getElementById(`layer-${k}`);
-                if (layer) {
-                    if (k === activeKey) {
-                        layer.classList.remove('hidden');
-                    } else {
-                        layer.classList.add('hidden');
-                    }
-                }
-            });
-        }
-
-        // Initialize on load
-        window.onload = function() {
-            updateView();
-        };
-    </script>
+    document.querySelectorAll("#timing-filters .chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        document.querySelectorAll("#timing-filters .chip").forEach(c => c.classList.remove("active"));
+        chip.classList.add("active");
+        renderHeroes(chip.dataset.timing, document.getElementById("hero-search").value);
+      });
+    });
+  </script>
 </body>
 </html>
