@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MLBB Parent & Beginner Companion (v1.05)</title>
+    <title>MLBB 101: Interactive Tactical Guide (v1.06)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -13,7 +13,6 @@
                         darkbg: '#0b0f19',
                         cardbg: '#131c31',
                         accent: '#6366f1',
-                        accentglow: '#818cf8',
                         gold: '#f59e0b',
                     }
                 }
@@ -22,9 +21,8 @@
     </script>
     <style>
         .glass {
-            background: rgba(19, 28, 49, 0.75);
+            background: rgba(19, 28, 49, 0.85);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glow-pulse {
@@ -32,7 +30,7 @@
         }
         @keyframes pulseGlow {
             0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.8)); }
+            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 12px rgba(99, 102, 241, 0.9)); }
             100% { transform: scale(1); opacity: 0.8; }
         }
         @keyframes dashMove {
@@ -43,11 +41,8 @@
             animation: dashMove 1s linear infinite;
         }
         ::-webkit-scrollbar {
-            width: 4px;
             height: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0b0f19;
+            width: 4px;
         }
         ::-webkit-scrollbar-thumb {
             background: #374151;
@@ -55,518 +50,298 @@
         }
     </style>
 </head>
-<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-24">
+<body class="bg-darkbg text-slate-100 font-sans antialiased min-h-screen pb-16">
 
-    <!-- Top App Header -->
+    <!-- Header -->
     <header class="glass sticky top-0 z-50 px-4 py-3 border-b border-slate-800 flex items-center justify-between">
         <div class="flex items-center space-x-3">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                <span class="text-xl font-black text-white">R</span>
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg">
+                <span class="text-sm font-black text-white">101</span>
             </div>
             <div>
-                <h1 class="font-bold text-base leading-tight tracking-wide text-white">Parent & Beginner Hub <span class="text-[10px] text-indigo-400 bg-indigo-500/20 px-1.5 py-0.5 rounded ml-1">v1.05</span></h1>
-                <p class="text-xs text-indigo-300 font-medium">MPL & M-Series Companion</p>
+                <h1 class="font-bold text-sm leading-tight text-white">Land of Dawn: MLBB 101</h1>
+                <p class="text-[10px] text-indigo-300">Tactical Map & Lesson Guide</p>
             </div>
         </div>
-        <div class="flex items-center space-x-2">
-            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live M8 Ready
-            </span>
-        </div>
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> v1.06 Live
+        </span>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-md mx-auto px-4 pt-4 pb-8 space-y-6">
+    <main class="max-w-md mx-auto px-4 pt-4 space-y-4">
 
-        <!-- TAB 1: HOME / 3D MAP & OVERVIEW -->
-        <section id="tab-home" class="tab-content space-y-5">
-            <!-- Hero Welcome Card -->
-            <div class="glass rounded-2xl p-5 relative overflow-hidden shadow-xl bg-gradient-to-br from-indigo-950/60 via-slate-900/80 to-purple-950/40">
-                <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-indigo-600/20 rounded-full blur-2xl"></div>
-                <div class="relative z-10">
-                    <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Tactical Map Hub (v1.05)</span>
-                    <h2 class="text-xl font-extrabold text-white mt-1">Land of Dawn: 3D Isometric Map</h2>
-                    <p class="text-sm text-slate-300 mt-2 leading-relaxed">
-                        Tap the tactical toggles below to reveal exact lane paths, buff camps, turrets, crystals, and minion routes perfectly aligned to the map!
-                    </p>
-                </div>
+        <!-- Horizontal Scrolling Menu Bar (Just like the video interface) -->
+        <div class="flex space-x-2 overflow-x-auto pb-2 pt-1 no-scrollbar" id="menu-bar">
+            <button onclick="selectLesson('gold')" id="menu-gold" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shrink-0 shadow transition">Gold</button>
+            <button onclick="selectLesson('exp')" id="menu-exp" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">EXP</button>
+            <button onclick="selectLesson('mid')" id="menu-mid" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Mid</button>
+            <button onclick="selectLesson('roles')" id="menu-roles" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Roles</button>
+            <button onclick="selectLesson('bluetank')" id="menu-bluetank" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Blue Turrets</button>
+            <button onclick="selectLesson('redtank')" id="menu-redtank" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Red Turrets</button>
+            <button onclick="selectLesson('turtle')" id="menu-turtle" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Turtle</button>
+            <button onclick="selectLesson('lord')" id="menu-lord" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Lord</button>
+            <button onclick="selectLesson('orange')" id="menu-orange" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Orange Buff</button>
+            <button onclick="selectLesson('purple')" id="menu-purple" class="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition">Purple Buff</button>
+        </div>
+
+        <!-- 3D Interactive Map Widget -->
+        <div class="glass rounded-2xl p-3 shadow-xl space-y-3">
+            <div class="flex items-center justify-between px-1">
+                <span id="lesson-counter" class="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Lesson 1 / 10</span>
+                <button onclick="resetMapView()" class="text-[10px] text-slate-400 hover:text-white bg-slate-800/80 px-2 py-0.5 rounded-md transition">Reset View 🔄</button>
             </div>
 
-            <!-- 3D Map Tactical Widget -->
-            <div class="glass rounded-2xl p-4 shadow-xl space-y-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-                        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-                        <span>Interactive 3D Tactical Overlay</span>
-                    </h3>
-                    <span class="text-xs text-indigo-300 font-medium">Toggle layers 👇</span>
-                </div>
+            <!-- Map Container with 3D Map Image and Locked Isometric SVG Overlay -->
+            <div class="relative w-full aspect-[1/1] rounded-xl overflow-hidden border border-slate-800 shadow-inner bg-slate-950 flex items-center justify-center">
+                <!-- Background 3D Isometric Map Image -->
+                <img src="1000433062.webp" alt="Land of Dawn 3D Map" class="absolute inset-0 w-full h-full object-cover opacity-95">
 
-                <!-- Layer Toggles -->
-                <div class="grid grid-cols-3 gap-1.5 text-[11px]">
-                    <button onclick="toggleLayer('lanes')" id="btn-lanes" class="py-1.5 px-2 rounded-lg bg-indigo-600 text-white font-bold transition">🧭 Lanes</button>
-                    <button onclick="toggleLayer('buffs')" id="btn-buffs" class="py-1.5 px-2 rounded-lg bg-slate-800 text-slate-300 font-bold transition">🔥 Buffs</button>
-                    <button onclick="toggleLayer('turrets')" id="btn-turrets" class="py-1.5 px-2 rounded-lg bg-slate-800 text-slate-300 font-bold transition">🏛️ Turrets</button>
-                    <button onclick="toggleLayer('crystals')" id="btn-crystals" class="py-1.5 px-2 rounded-lg bg-slate-800 text-slate-300 font-bold transition">💎 Crystals</button>
-                    <button onclick="toggleLayer('lord')" id="btn-lord" class="py-1.5 px-2 rounded-lg bg-slate-800 text-slate-300 font-bold transition">👑 Bosses</button>
-                    <button onclick="toggleLayer('minions')" id="btn-minions" class="py-1.5 px-2 rounded-lg bg-slate-800 text-slate-300 font-bold transition">🛡️ Minions</button>
-                </div>
+                <!-- Mathematically Aligned Isometric SVG Overlay -->
+                <svg viewBox="0 0 500 500" class="absolute inset-0 w-full h-full pointer-events-none z-10">
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+                        </marker>
+                    </defs>
 
-                <!-- Map Container with 3D Map Image & Aligned SVG Overlay -->
-                <div class="relative w-full aspect-[1/1] rounded-xl overflow-hidden border border-slate-800 shadow-inner bg-slate-950 flex items-center justify-center">
-                    <!-- Background 3D Isometric Map Image -->
-                    <img src="1000433062.webp" alt="Land of Dawn 3D Map" class="absolute inset-0 w-full h-full object-cover opacity-95">
-                    
-                    <!-- Perfectly Aligned SVG Overlay -->
-                    <svg viewBox="0 0 500 500" class="absolute inset-0 w-full h-full pointer-events-none z-10">
-                        <defs>
-                            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
-                            </marker>
-                        </defs>
+                    <!-- 1. GOLD LANE -->
+                    <g id="layer-gold">
+                        <path d="M 120,380 L 250,75 L 420,225" fill="none" stroke="#f59e0b" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                        <circle cx="120" cy="380" r="10" fill="#f59e0b" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="120" y="383" font-size="9" fill="#000" font-weight="bold" text-anchor="middle">1</text>
+                        <circle cx="420" cy="225" r="10" fill="#ef4444" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="420" y="228" font-size="9" fill="#fff" font-weight="bold" text-anchor="middle">2</text>
+                    </g>
 
-                        <!-- 1. LANES WITH DIRECTIONAL ARROWS -->
-                        <g id="layer-lanes">
-                            <path d="M 95,240 L 250,95 L 405,240" fill="none" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                            <path d="M 95,240 L 250,250 L 405,240" fill="none" stroke="#ec4899" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                            <path d="M 95,240 L 250,405 L 405,240" fill="none" stroke="#8b5cf6" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
-                        </g>
+                    <!-- 2. EXP LANE -->
+                    <g id="layer-exp" class="hidden">
+                        <path d="M 120,380 L 75,235 L 380,100" fill="none" stroke="#8b5cf6" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                        <circle cx="120" cy="380" r="10" fill="#8b5cf6" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="120" y="383" font-size="9" fill="#fff" font-weight="bold" text-anchor="middle">1</text>
+                        <circle cx="380" cy="100" r="10" fill="#ef4444" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="380" y="103" font-size="9" fill="#fff" font-weight="bold" text-anchor="middle">2</text>
+                    </g>
 
-                        <!-- 2. BUFF LOCATIONS -->
-                        <g id="layer-buffs" class="hidden">
-                            <circle cx="185" cy="310" r="12" fill="#a855f7" fill-opacity="0.85" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
-                            <text x="185" y="313" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
-                            <circle cx="315" cy="190" r="12" fill="#a855f7" fill-opacity="0.85" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
-                            <text x="315" y="193" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
-                            <circle cx="190" cy="190" r="12" fill="#f97316" fill-opacity="0.85" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
-                            <text x="190" y="193" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
-                            <circle cx="310" cy="310" r="12" fill="#f97316" fill-opacity="0.85" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
-                            <text x="310" y="313" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
-                        </g>
+                    <!-- 3. MID LANE -->
+                    <g id="layer-mid" class="hidden">
+                        <path d="M 120,380 L 250,250 L 380,100" fill="none" stroke="#ec4899" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" class="glow-pulse"/>
+                        <circle cx="250" cy="250" r="14" fill="#ec4899" fill-opacity="0.8" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="250" y="254" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Mid</text>
+                    </g>
 
-                        <!-- 3. TURRETS -->
-                        <g id="layer-turrets" class="hidden">
-                            <rect x="95" y="235" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="140" y="280" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="180" y="350" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="245" y="380" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="150" y="190" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="400" y="235" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="355" y="190" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="315" y="125" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="250" y="100" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                            <rect x="345" y="285" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
-                        </g>
+                    <!-- 4. ROLES OVERVIEW -->
+                    <g id="layer-roles" class="hidden">
+                        <path d="M 120,380 L 250,75 L 420,225" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="4"/>
+                        <path d="M 120,380 L 75,235 L 380,100" fill="none" stroke="#14b8a6" stroke-width="3" stroke-dasharray="4"/>
+                        <path d="M 120,380 L 250,250 L 380,100" fill="none" stroke="#ec4899" stroke-width="3" stroke-dasharray="4"/>
+                    </g>
 
-                        <!-- 4. CRYSTALS -->
-                        <g id="layer-crystals" class="hidden">
-                            <polygon points="95,255 85,275 105,275" fill="#3b82f6" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
-                            <text x="95" y="290" font-size="8" fill="#93c5fd" font-weight="bold" text-anchor="middle">Blue Base</text>
-                            <polygon points="405,215 395,195 415,195" fill="#ef4444" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
-                            <text x="405" y="185" font-size="8" fill="#fca5a5" font-weight="bold" text-anchor="middle">Red Base</text>
-                        </g>
+                    <!-- 5. BLUE TURRETS (9 Towers) -->
+                    <g id="layer-bluetank" class="hidden">
+                        <!-- Gold Lane Turrets -->
+                        <rect x="235" y="100" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="290" y="150" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="350" y="195" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <!-- Mid Lane Turrets -->
+                        <rect x="190" y="180" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="220" y="220" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <!-- EXP Lane Turrets -->
+                        <rect x="115" y="250" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="145" y="300" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="180" y="340" width="10" height="10" fill="#3b82f6" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <!-- Base Turret -->
+                        <rect x="105" y="365" width="12" height="12" fill="#3b82f6" stroke="#fff" stroke-width="1.5" rx="2" class="glow-pulse"/>
+                    </g>
 
-                        <!-- 5. LORD & TURTLE -->
-                        <g id="layer-lord" class="hidden">
-                            <circle cx="215" cy="170" r="14" fill="#10b981" fill-opacity="0.9" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
-                            <text x="215" y="173" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Turtle</text>
-                            <circle cx="250" cy="250" r="16" fill="#eab308" fill-opacity="0.9" stroke="#ffffff" stroke-width="1.5" class="glow-pulse"/>
-                            <text x="250" y="253" font-size="7" fill="#000" font-weight="bold" text-anchor="middle">Lord</text>
-                        </g>
+                    <!-- 6. RED TURRETS (9 Towers) -->
+                    <g id="layer-redtank" class="hidden">
+                        <rect x="260" y="380" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="210" y="330" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="160" y="290" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="310" y="300" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="280" y="260" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="380" y="225" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="350" y="180" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="310" y="140" width="10" height="10" fill="#ef4444" stroke="#fff" stroke-width="1.2" rx="2"/>
+                        <rect x="395" y="115" width="12" height="12" fill="#ef4444" stroke="#fff" stroke-width="1.5" rx="2" class="glow-pulse"/>
+                    </g>
 
-                        <!-- 6. MINIONS -->
-                        <g id="layer-minions" class="hidden">
-                            <path d="M 95,240 L 250,95 L 405,240" fill="none" stroke="#38bdf8" stroke-width="2.5" class="animate-dash"/>
-                            <path d="M 95,240 L 250,250 L 405,240" fill="none" stroke="#38bdf8" stroke-width="2.5" class="animate-dash"/>
-                            <path d="M 95,240 L 250,405 L 405,240" fill="none" stroke="#38bdf8" stroke-width="2.5" class="animate-dash"/>
-                        </g>
-                    </svg>
-                </div>
+                    <!-- 7. TURTLE -->
+                    <g id="layer-turtle" class="hidden">
+                        <circle cx="210" cy="165" r="16" fill="#10b981" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="210" y="169" font-size="8" fill="#fff" font-weight="bold" text-anchor="middle">Turtle</text>
+                    </g>
 
-                <!-- Info Dynamic Footer -->
-                <div id="realmap-info" class="p-2.5 rounded-xl bg-slate-900/90 border border-indigo-500/30 text-xs text-slate-200">
-                    <span class="font-bold text-indigo-400">🧭 Lane Paths Active:</span> Showing directional flow across Gold, Mid, and EXP lanes.
-                </div>
+                    <!-- 8. LORD -->
+                    <g id="layer-lord" class="hidden">
+                        <circle cx="250" cy="250" r="18" fill="#eab308" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="250" y="254" font-size="8" fill="#000" font-weight="bold" text-anchor="middle">Lord</text>
+                    </g>
+
+                    <!-- 9. ORANGE BUFF -->
+                    <g id="layer-orange" class="hidden">
+                        <circle cx="180" cy="190" r="14" fill="#f97316" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="180" y="193" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
+                        <circle cx="320" cy="310" r="14" fill="#f97316" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="320" y="313" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Orange</text>
+                    </g>
+
+                    <!-- 10. PURPLE BUFF -->
+                    <g id="layer-purple" class="hidden">
+                        <circle cx="170" cy="300" r="14" fill="#a855f7" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="170" y="303" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
+                        <circle cx="330" cy="200" r="14" fill="#a855f7" fill-opacity="0.9" stroke="#fff" stroke-width="2" class="glow-pulse"/>
+                        <text x="330" y="203" font-size="7" fill="#fff" font-weight="bold" text-anchor="middle">Purple</text>
+                    </g>
+                </svg>
             </div>
+        </div>
 
-            <!-- Quick Sports Analogy Guide -->
-            <div class="glass rounded-2xl p-4 space-y-3">
-                <h3 class="font-bold text-sm text-white flex items-center space-x-2">
-                    <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                    <span>MLBB translated to Traditional Sports</span>
-                </h3>
-                <div class="grid grid-cols-2 gap-2.5">
-                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                        <span class="text-xs font-bold text-indigo-400 block">The Crystal</span>
-                        <p class="text-xs text-slate-300 mt-0.5">Like scoring a goal in football: destroy the enemy crystal to win.</p>
-                    </div>
-                    <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
-                        <span class="text-xs font-bold text-indigo-400 block">Lord Boss</span>
-                        <p class="text-xs text-slate-300 mt-0.5">Sudden death overtime boss; whoever slays it gets an unstoppable battering ram.</p>
-                    </div>
-                </div>
+        <!-- Dynamic Lesson Explanation Box (Matches video bottom card) -->
+        <div class="glass rounded-2xl p-4 space-y-3 shadow-xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                <span id="lesson-title" class="font-extrabold text-sm uppercase tracking-wide text-indigo-400">Gold Lane</span>
+                <span id="lesson-index" class="text-xs text-slate-400 font-semibold">1 / 10</span>
             </div>
-        </section>
-
-        <!-- TAB 2: TOURNAMENT, CAREER & ABOUT -->
-        <section id="tab-career" class="tab-content hidden space-y-5">
-            <div class="glass rounded-2xl p-5 space-y-3">
-                <span class="text-xs uppercase tracking-widest text-indigo-400 font-bold">Background & History</span>
-                <h3 class="text-base font-bold text-white">How Mobile Legends (MLBB) Began</h3>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    Launched in <strong class="text-white">2016</strong> by Moonton, MLBB was built to bring the deep strategy of PC multiplayer online battle arena (MOBA) games directly to smartphones.
-                </p>
+            <p id="lesson-desc" class="text-xs text-slate-200 leading-relaxed">
+                A line from point 1, the blue side, to point 2, the red base. This is the marksman's lane. Minions on this lane pay bonus gold. The cannon in the early waves is worth even more—last-hit it.
+            </p>
+            <div class="flex justify-between pt-2">
+                <button onclick="prevLesson()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-xl text-xs font-bold transition">Back</button>
+                <button onclick="nextLesson()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Next lesson</button>
             </div>
-
-            <!-- T&C / Legal Liability Disclaimer Section -->
-            <div class="glass rounded-2xl p-5 space-y-3 border border-amber-500/30 bg-gradient-to-br from-amber-950/30 via-slate-900/80 to-slate-950">
-                <div class="flex items-center space-x-2">
-                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.92 3 1.732 3z"></path></svg>
-                    <h3 class="text-base font-bold text-amber-300">Legal Liability & Terms of Service (T&C) [v1.05]</h3>
-                </div>
-                <p class="text-xs text-slate-300 leading-relaxed">
-                    As a digital companion application providing educational esports guides, proper Terms & Conditions (T&C) and Disclaimers are crucial before public launch to protect against legal liability.
-                </p>
-                <div class="space-y-2 pt-1">
-                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs text-slate-200">
-                        <strong class="text-amber-400 block mb-1">1. Intellectual Property & Disclaimer</strong>
-                        <p class="text-slate-400">Mobile Legends: Bang Bang (MLBB), hero names, and tournament assets are trademarks of Moonton. This app is an independent educational companion not officially affiliated with Moonton.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 3: SPECTATOR CHEAT SHEET -->
-        <section id="tab-cheatsheet" class="tab-content hidden space-y-4">
-            <div class="glass rounded-2xl p-4 space-y-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-bold text-sm text-white">Full Hero Roster & Caster Jargon (v1.05)</h3>
-                    <span id="hero-count-badge" class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-0.5 rounded-full border border-indigo-500/30 font-semibold">68 Heroes</span>
-                </div>
-                
-                <!-- Search Input -->
-                <div class="relative">
-                    <input type="text" id="cheat-search" oninput="filterCheatSheet()" placeholder="Search hero or term..." 
-                        class="w-full bg-slate-950/80 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-                    <span class="absolute right-3 top-3 text-slate-500 text-xs">🔍</span>
-                </div>
-
-                <!-- Role Filters -->
-                <div>
-                    <span class="text-[10px] text-indigo-300 font-bold block mb-1">Filter by Role:</span>
-                    <div class="flex flex-wrap gap-1" id="role-filters">
-                        <button onclick="setRoleFilter('All')" id="role-btn-All" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 text-white transition">All Roles</button>
-                        <button onclick="setRoleFilter('Roamer')" id="role-btn-Roamer" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Roamer</button>
-                        <button onclick="setRoleFilter('Mid')" id="role-btn-Mid" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Mid Lane</button>
-                        <button onclick="setRoleFilter('Gold')" id="role-btn-Gold" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Gold Lane</button>
-                        <button onclick="setRoleFilter('EXP')" id="role-btn-EXP" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">EXP Lane</button>
-                        <button onclick="setRoleFilter('Jungler')" id="role-btn-Jungler" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Jungler</button>
-                    </div>
-                </div>
-
-                <!-- Timing Filters -->
-                <div>
-                    <span class="text-[10px] text-gold font-bold block mb-1">Filter by Power Spike Timing:</span>
-                    <div class="flex flex-wrap gap-1" id="timing-filters">
-                        <button onclick="setTimingFilter('All')" id="timing-btn-All" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-gold text-slate-950 transition">All Timings</button>
-                        <button onclick="setTimingFilter('Early')" id="timing-btn-Early" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Early Game</button>
-                        <button onclick="setTimingFilter('Mid')" id="timing-btn-Mid" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Mid Game</button>
-                        <button onclick="setTimingFilter('Late')" id="timing-btn-Late" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition">Late Game</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex space-x-2">
-                <button onclick="setCheatTab('heroes')" id="btn-filter-heroes" class="flex-1 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-md transition">Heroes (68)</button>
-                <button onclick="setCheatTab('jargon')" id="btn-filter-jargon" class="flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-400 hover:text-white transition">Caster Jargon</button>
-            </div>
-
-            <div id="cheat-list-container" class="space-y-2.5 max-h-[50vh] overflow-y-auto pr-1"></div>
-        </section>
-
-        <!-- TAB 4: ELIF AI ASSISTANT -->
-        <section id="tab-ai" class="tab-content hidden space-y-4">
-            <div class="glass rounded-2xl p-4 space-y-3 flex flex-col h-[70vh]">
-                <div class="flex items-center space-x-3 pb-3 border-b border-slate-800">
-                    <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">AI</div>
-                    <div>
-                        <h3 class="font-bold text-xs text-white">ELIF (Explain Like I'm 5) Assistant</h3>
-                        <span class="text-[10px] text-emerald-400 flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1 animate-pulse"></span> Web-search enabled</span>
-                    </div>
-                </div>
-                <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-1 text-xs">
-                    <div class="bg-indigo-950/50 p-3 rounded-xl border border-indigo-500/20 text-indigo-200">
-                        👋 Hello! I am your ELIF AI assistant (v1.05). Ask me anything about MLBB matches, players, or parent guidance!
-                    </div>
-                </div>
-                <div class="flex space-x-2 pt-2 border-t border-slate-800">
-                    <input type="text" id="chat-input" onkeypress="handleChatKeyPress(event)" placeholder="Ask a question..." 
-                        class="flex-1 bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-                    <button onclick="sendChatMessage()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Send</button>
-                </div>
-            </div>
-        </section>
+        </div>
 
     </main>
 
-    <!-- Bottom Navigation Bar -->
-    <nav class="glass fixed bottom-0 left-0 right-0 z-50 px-4 py-2.5 border-t border-slate-800 flex justify-around max-w-md mx-auto">
-        <button onclick="switchTab('home')" id="nav-home" class="nav-btn flex flex-col items-center text-indigo-400 space-y-0.5 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            <span class="text-[10px] font-bold">3D Map</span>
-        </button>
-        <button onclick="switchTab('career')" id="nav-career" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 space-y-0.5 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-            <span class="text-[10px] font-bold">About / T&C</span>
-        </button>
-        <button onclick="switchTab('cheatsheet')" id="nav-cheatsheet" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 space-y-0.5 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012-2m-6 9l2 2 4-4"></path></svg>
-            <span class="text-[10px] font-bold">Cheat Sheet</span>
-        </button>
-        <button onclick="switchTab('ai')" id="nav-ai" class="nav-btn flex flex-col items-center text-slate-400 hover:text-slate-200 space-y-0.5 transition">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
-            <span class="text-[10px] font-bold">ELIF AI</span>
-        </button>
-    </nav>
-
-    <!-- JavaScript Logic -->
+    <!-- Script Engine -->
     <script>
-        const layerInfo = {
-            lanes: "🧭 Lane Paths Active: Showing directional flow arrows from Point 1 to Point 2 across Gold, Mid, and EXP lanes.",
-            buffs: "🔥 Buff Camps Active: Pinpointing exact locations of purple (energy/mana) and orange (attack/EXP) buff monsters.",
-            turrets: "🏛️ Turrets Active: Highlighting defensive tower placements guarding all three main lanes.",
-            crystals: "💎 Crystals Active: Pointing out the core base crystals (destroying this wins the match).",
-            lord: "👑 Bosses Active: Showing the Turtle location (early game objective) and Lord location (late game overtime boss).",
-            minions: "🛡️ Minion Paths Active: Animating minion wave march routes from spawn points along each lane."
-        };
+        const lessons = [
+            {
+                id: 'gold',
+                title: 'Gold Lane',
+                counter: '1 / 10',
+                desc: 'A line from point 1, the blue side, to point 2, the red base. This is the marksman\'s lane. Minions on this lane pay bonus gold. The cannon in the early waves is worth even more—last-hit it.'
+            },
+            {
+                id: 'exp',
+                title: 'EXP Lane',
+                counter: '2 / 10',
+                desc: 'Point 1 to point 2 along the fighter\'s lane. Bonus experience, not bonus gold. You should hit level 4 before the gold laner. That spike is your first fight.'
+            },
+            {
+                id: 'mid',
+                title: 'Mid Lane',
+                counter: '3 / 10',
+                desc: 'The short diagonal. Mages clear it and leave. Mid is the closest hero to both river pits. A good mid is at the first Turtle. Clear the wave before you roam, or your tower eats damage.'
+            },
+            {
+                id: 'roles',
+                title: 'Who Goes Where',
+                counter: '4 / 10',
+                desc: 'Five heroes, three lanes, two jungles. The lanes are the pins. The pins are the buffs. Gold, the amber line: marksman. EXP, the teal line: fighter. Mid, the pale line: mage.'
+            },
+            {
+                id: 'bluetank',
+                title: 'Blue Turrets',
+                counter: '5 / 10',
+                desc: 'The nine blue towers, counting out from the bottom-left base. Each lane has an outer, an inner and a base tower. That is your shield.'
+            },
+            {
+                id: 'redtank',
+                title: 'Red Turrets',
+                counter: '6 / 10',
+                desc: 'The nine red towers, wrapped around the top-right base. Red\'s Gold towers run down the right edge. EXP towers sit on the left.'
+            },
+            {
+                id: 'turtle',
+                title: 'Turtle',
+                counter: '7 / 10',
+                desc: 'The lower river pit. Spawns early, grants global gold and shield. Contesting this determines early momentum.'
+            },
+            {
+                id: 'lord',
+                title: 'Lord',
+                counter: '8 / 10',
+                desc: 'The upper river pit. From 8:00 this is the objective that ends games. Slaying the Lord sends it down a lane to hit towers. Someone still has to push with it.'
+            },
+            {
+                id: 'orange',
+                title: 'Orange Buff',
+                counter: '9 / 10',
+                desc: 'For both camps: Damage, and a slow on your attacks. Blue\'s camp is in the lower jungle. Red\'s is in the upper jungle, toward the EXP lane. This is the buff the marksman takes once they are farmed.'
+            },
+            {
+                id: 'purple',
+                title: 'Purple Buff',
+                counter: '10 / 10',
+                desc: 'Energy and cooldown reduction. Essential for assassins and mana-hungry mages to spam skills continuously without running dry.'
+            }
+        ];
 
-        function toggleLayer(layerKey) {
-            const layers = ['lanes', 'buffs', 'turrets', 'crystals', 'lord', 'minions'];
-            layers.forEach(l => {
-                const el = document.getElementById(`layer-${l}`);
-                const btn = document.getElementById(`btn-${l}`);
-                if (l === layerKey) {
-                    el.classList.toggle('hidden');
-                    if (!el.classList.contains('hidden')) {
-                        btn.className = "py-1.5 px-2 rounded-lg bg-indigo-600 text-white font-bold transition";
-                        document.getElementById('realmap-info').innerHTML = `<span class="font-bold text-indigo-400">${layerInfo[l]}</span>`;
+        let currentIndex = 0;
+        const keys = ['gold', 'exp', 'mid', 'roles', 'bluetank', 'redtank', 'turtle', 'lord', 'orange', 'purple'];
+
+        function selectLesson(key) {
+            currentIndex = keys.indexOf(key);
+            if (currentIndex === -1) currentIndex = 0;
+            updateView();
+        }
+
+        function nextLesson() {
+            currentIndex = (currentIndex + 1) % lessons.length;
+            updateView();
+        }
+
+        function prevLesson() {
+            currentIndex = (currentIndex - 1 + lessons.length) % lessons.length;
+            updateView();
+        }
+
+        function resetMapView() {
+            updateView();
+        }
+
+        function updateView() {
+            const lesson = lessons[currentIndex];
+            const activeKey = keys[currentIndex];
+
+            // Update text content
+            document.getElementById('lesson-title').innerText = lesson.title;
+            document.getElementById('lesson-counter').innerText = `Lesson ${lesson.counter}`;
+            document.getElementById('lesson-index').innerText = lesson.counter;
+            document.getElementById('lesson-desc').innerText = lesson.desc;
+
+            // Highlight menu button
+            keys.forEach(k => {
+                const btn = document.getElementById(`menu-${k}`);
+                if (btn) {
+                    if (k === activeKey) {
+                        btn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shrink-0 shadow transition";
+                        btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
                     } else {
-                        btn.className = "py-1.5 px-2 rounded-lg bg-slate-800 text-slate-300 font-bold transition";
+                        btn.className = "px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 shrink-0 hover:text-white transition";
+                    }
+                }
+            });
+
+            // Toggle SVG layers
+            keys.forEach(k => {
+                const layer = document.getElementById(`layer-${k}`);
+                if (layer) {
+                    if (k === activeKey) {
+                        layer.classList.remove('hidden');
+                    } else {
+                        layer.classList.add('hidden');
                     }
                 }
             });
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('text-indigo-400');
-                btn.classList.add('text-slate-400');
-            });
-            document.getElementById(`nav-${tabId}`).classList.remove('text-slate-400');
-            document.getElementById(`nav-${tabId}`).classList.add('text-indigo-400');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        const heroes = [
-            ["Aamon", "Mid", "Mid", "Endless Shards", "Tracks shards stored in stealth and camouflage breaks for backline deletion.", "Burst / Stealth"],
-            ["Akai", "Roamer", "Mid", "Heavy Spin", "Tracks pin-down positioning against walls and ultimate crowd control rotation.", "Displacement / Tank"],
-            ["Angela", "Roamer", "Mid", "Heartguard", "Body-snapping attachment onto carry with shield and immobilize.", "Targeted Shield / Aid"],
-            ["Argus", "EXP", "Late", "Eternal Evil", "Temporary immortality converting damage taken into health.", "Immortality / Carry"],
-            ["Arlott", "EXP", "Mid", "Final Slash", "Mark triggers to chain relentless gap-closing dashes.", "Crowd Control / Slash"],
-            ["Atlas", "Roamer", "Late", "Fatal Links", "Ejection mechanics to hook enemy groups into teammate AOE.", "Mass Pull / Setup"],
-            ["Aulus", "Jungler", "Late", "Undying Fury", "Tracks passive stack battle fury and unstoppable skill rushes.", "Jungle / EXP Brawler"],
-            ["Barats", "Jungler", "Mid", "Detona's Welcome", "Big Guy stack accumulation and targeted devour suppression.", "Suppression / Tanky"],
-            ["Baxia", "Roamer", "Early", "Baxia-shield Unity", "Rolling shell mobility and healing reduction aura application.", "Rotation / Anti-Heal"],
-            ["Brody", "Gold", "Late", "Abyss Impact", "Tracks stack accumulation and lock-on execution distance.", "Marksman / Mobility"],
-            ["Carmilla", "Roamer", "Mid", "Curse of Blood", "Link curse spreading damage across multiple enemy champions.", "Damage Link / Debuff"],
-            ["Chip", "Roamer", "Mid", "Shortcut", "Portal gateway network setup across map for sudden ambush rotations.", "Global Portal / Utility"],
-            ["Chou", "EXP", "Mid", "Way of the Dragon", "Tracks Flash-Kick combo setup and displacement angle.", "Airborne / Lockdown"],
-            ["Cici", "EXP", "Mid", "Performer's Delight", "Yo-yo tether distance and continuous sustained kiting.", "Kiting / Sustained DPS"],
-            ["Claude", "Gold", "Late", "Blazing Duet", "Tracks Dexter's passive stack triggers and attack speed stacks.", "Burst / Sustained DPS"],
-            ["Clint", "Gold", "Late", "Howitzer", "Tracks passive double-shot basic attack rhythm after each skill.", "Marksman / Poke"],
-            ["Diggie", "Roamer", "Late", "Time Journey", "Purify AOE shield bubble negating heavy enemy crowd control.", "Anti-CC / Utility"],
-            ["Edith", "EXP", "Mid", "Primal Wrath", "Phylax flight conversion into fierce marksman ranged DPS.", "Tank-to-Marksman"],
-            ["Esmeralda", "EXP", "Mid", "Falling Starmoon", "Shield absorption conversion and continuous spell vamp duel.", "Sustain / Shield Steal"],
-            ["Estes", "Roamer", "Late", "Blessing of Moon Goddess", "Continuous team-wide HP regeneration link aura.", "AOE Healing / Sustain"],
-            ["Eudora", "Mid", "Mid", "Thunder's Wrath", "Tracks superconductor passive and instant target deletion.", "Burst Mage / Stun"],
-            ["Fanny", "Jungler", "Late", "Cut Throat", "Cable energy lines and high-speed energy regeneration loops.", "Extreme Mobility"],
-            ["Floryn", "Roamer", "Mid", "Bloom", "Global healing fruit distribution and massive sprout healing bursts.", "Global Sustain"],
-            ["Fredrinn", "Jungler", "Mid", "Appraiser's Wrath", "Tracks Combo Points and ultimate reset window on burst damage.", "Frontline / Tankiness"],
-            ["Freya", "EXP", "Late", "Valkyrie Descent", "Tracks shield stacks and high physical burst during landing.", "Burst Bruiser / Carry"],
-            ["Gloo", "Roamer", "Late", "Split, Split", "Tracks gooey stack accumulation and ultimate attach duration.", "Crowd Control / Disruption"],
-            ["Granger", "Jungler", "Early", "Death Sonata", "Final bullet critical shot rhythm and long-range rocket barrage.", "Burst Marksman"],
-            ["Grock", "Roamer", "Early", "Wild Charge", "Wall construction blocking paths and charging for physical impact.", "Zoning / Tank"],
-            ["Gusion", "Jungler", "Mid", "Incandescence", "Dagger retrieval angles and rapid skill reset burst combos.", "Burst / Assassin"],
-            ["Harith", "Gold", "Late", "Ages-Ago", "Collar of Eternity cooldown reduction sync and spatial dash loops.", "High Mobility / Magic"],
-            ["Hayabusa", "Jungler", "Late", "Ougi: Shadow Kill", "Shadow placement layout and multi-hit single-target focus.", "Mobility / Untargetable"],
-            ["Helcurt", "Jungler", "Early", "Dark Night Falls", "Global vision blackout and stealth backline assassination.", "Assassination / Stealth"],
-            ["Hylos", "Roamer", "Early", "Glorious Pathway", "Speed-boosting trail deployment and massive health pool absorption.", "Zoning / Aura"],
-            ["Joy", "EXP", "Mid", "Rhythm of Joy", "Beat rhythm synchronization for skill dashing and CC immunity.", "Agility / Spell Vamp"],
-            ["Julian", "Mid", "Early", "Enhanced Skill 3", "Look for skill rotation triggers for instant level 3 ganks.", "Burst / AOE"],
-            ["Khufra", "Roamer", "Early", "Tyrant's Revenge", "Bouncing ball form cancelling enemy dashes and wall-stuns.", "Anti-Dash / Lockdown"],
-            ["Kimmy", "Gold", "Early", "Maximum Charge", "Free-aiming chemical spray gun dealing hybrid damage while moving.", "Hybrid Kiting"],
-            ["Lancelot", "Jungler", "Mid", "Phantom Execution", "Triangular piercing dashes and untargetable iframe casts.", "Mobility / Iframes"],
-            ["Lapu-Lapu", "EXP", "Mid", "Bravest Fighter", "Heavy sword stance transformation and damage mitigation shields.", "Sustain / Bruiser"],
-            ["Layla", "Gold", "Late", "Destruction Rush", "Positioning distance for maximum passive range scaling and basic DPS.", "Hyper-Carry / DPS"],
-            ["Ling", "Jungler", "Late", "Tempest of Blades", "Energy management and wall-walking sword field collection.", "Mobility / Reset"],
-            ["Luo Yi", "Mid", "Mid", "Diversion", "Yin-yang mark polarization teleporting teammates across map.", "Teleport / AOE Pull"],
-            ["Lylia", "Mid", "Early", "Black Shoes", "Tracks Gloom stack detonation timing and spatial recall safety.", "AOE Poke / Mage"],
-            ["Masha", "EXP", "Late", "Wild Power", "Three health bar mechanics and attack speed surges when low HP.", "Split Push / Speed"],
-            ["Mathilda", "Roamer", "Early", "Circling Eagle", "Guiding Wind flight carry for teammates and shield generation.", "Mobility / Utility"],
-            ["Minotaur", "Roamer", "Mid", "Minoan Fury", "Rage meter filling up to unleash multi-stage airborne knockups.", "Crowd Control / Tank"],
-            ["Nolan", "Jungler", "Early", "Fracture / Rift", "Tracks dimensional rift slash pathing and energy reset dashes.", "Assassin / Mobility"],
-            ["Novaria", "Mid", "Late", "Astral Recall", "Long-range sniper projectile impact and global enemy vision reveal.", "Long-Range Poke"],
-            ["Odette", "Mid", "Late", "Swan Song", "Channeling area-of-effect ultimate positioning with freeze setup.", "AOE Teamfight Burst"],
-            ["Paquito", "EXP", "Early", "Knockout Strike", "Tracks Heavy Left Punch stack generation and devastating combos.", "Burst Bruiser"],
-            ["Pharsa", "Mid", "Mid", "Feathered Airstrike", "Long-range artillery bombardment zones forcing enemy displacement.", "Long-Range Artillery"],
-            ["Phoveus", "EXP", "Mid", "Demonic Force", "Blinks and dashes triggered on enemy team; punishes mobility.", "Anti-Dash / Slam"],
-            ["Rafaela", "Roamer", "Early", "Holy Baptism", "Global movement speed buff, slow cleanse, and precision stuns.", "Support / Speed"],
-            ["Ruby", "EXP", "Early", "I'm Offended!", "Hook-and-pull crowd control chains combined with swift hops.", "Crowd Control / Pull"],
-            ["Terizla", "EXP", "Early", "Execution Strike", "Massive chained area-of-effect pull and slow deployment.", "AOE / Heavy Slow"],
-            ["Tigreal", "Roamer", "Mid", "Implosion", "Flash-ult positioning to drag entire enemy backlines into turrets.", "Mass Pull / Initiation"],
-            ["Uranus", "EXP", "Late", "Consecration", "HP regen stacking rate and continuous energy orb generation.", "Sustain / Roamer"],
-            ["Valentina", "Mid", "Mid", "I Am You", "Stealing enemy ultimate abilities to turn teamfight dynamics.", "Imitation / Burst"],
-            ["Wanwan", "Gold", "Late", "Crossbow of Tang", "Weakness pinpoint activation to unleash untargetable bullet barrage.", "Hyper-Carry / Agility"],
-            ["X.Borg", "EXP", "Early", "Last Insanity", "Armor health gauge bar and fiery flame spin radius detonation.", "AOE Poke / Reset"],
-            ["Yi Sun-shin", "Jungler", "Mid", "Mountain Shocker", "Global reveal arrow tracking and passive melee/ranged swaps.", "Poke / Global Map"],
-            ["Yu Zhong", "EXP", "Late", "Black Dragon", "Dragon transformation stage and life-stealing spell vamp.", "Sustain / Dive"],
-            ["Yve", "Mid", "Mid", "Real World", "Starfield grid drawing for tapping mini-stuns and beam destruction.", "Zoning / AOE Stun"],
-            ["Zetian", "Mid", "Late", "Celestial Decree", "Heavenly judgment strikes descending upon enemy backline.", "AOE Burst / Mage"],
-            ["Zhuxin", "Mid", "Mid", "Lantern Spell", "Lantern floating mechanics carrying enemies across terrain.", "Displacement / CC"]
-        ];
-
-        const jargon = [
-            ["Burst", "Deleting or dealing massive damage in a fraction of a second using a rapid sequence of skills."],
-            ["CC (Crowd Control)", "Stuns, suppressions, or slows that restrict enemy movement or skill casting."],
-            ["Carry", "The primary damage dealer (Gold Laner or Jungler) designed to win the late game."],
-            ["Contest", "Fighting over a major neutral objective (Turtle or Lord) rather than giving it up."],
-            ["Draft", "The strategic phase before a match where teams pick and ban heroes like a chess game."],
-            ["Freeze Lane", "Holding minion waves near your own turret to safely deny gold and EXP from the enemy."],
-            ["Gank", "Surprising an enemy in a lane with multiple teammates to secure a quick kill."],
-            ["Kiting", "Attacking an enemy while continuously moving backward to stay out of their range."],
-            ["Lord Dance", "Cautious tactical positioning around the Lord pit before starting or contesting the boss."],
-            ["Macro", "Big-picture strategy: map awareness, rotation timing, pushing lanes, and objective control."],
-            ["Micro", "Individual mechanical skill: hero reflexes, dodging skills, and combo execution speed."],
-            ["Counter-pick", "Choosing a hero specifically designed to defeat or neutralize an enemy hero."],
-            ["Power Spike", "A specific level or item threshold where a hero suddenly becomes extremely strong."],
-            ["Retribution", "The dedicated jungler Battle Spell used to secure neutral monsters with true damage."],
-            ["Snowballing", "Translating an early lead into an insurmountable advantage across the map."],
-            ["Sustain", "The ability to stay on the map or in fights longer through healing, lifesteal, or shields."],
-            ["Spell Vamp", "Healing a percentage of health back based on skill damage dealt to enemies."]
-        ];
-
-        let currentCheatTab = 'heroes';
-        let currentRoleFilter = 'All';
-        let currentTimingFilter = 'All';
-
-        function setCheatTab(tab) {
-            currentCheatTab = tab;
-            const btnH = document.getElementById('btn-filter-heroes');
-            const btnJ = document.getElementById('btn-filter-jargon');
-            if (tab === 'heroes') {
-                btnH.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-md transition";
-                btnJ.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-400 hover:text-white transition";
-            } else {
-                btnJ.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-indigo-600 text-white shadow-md transition";
-                btnH.className = "flex-1 py-2 text-xs font-bold rounded-xl bg-slate-800 text-slate-400 hover:text-white transition";
-            }
-            filterCheatSheet();
-        }
-
-        function setRoleFilter(role) {
-            currentRoleFilter = role;
-            ['All', 'Roamer', 'Mid', 'Gold', 'EXP', 'Jungler'].forEach(r => {
-                const btn = document.getElementById(`role-btn-${r}`);
-                if (r === role) {
-                    btn.className = "px-2.5 py-1 rounded-lg text-[10px] font-bold bg-indigo-600 text-white transition";
-                } else {
-                    btn.className = "px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition";
-                }
-            });
-            filterCheatSheet();
-        }
-
-        function setTimingFilter(timing) {
-            currentTimingFilter = timing;
-            ['All', 'Early', 'Mid', 'Late'].forEach(t => {
-                const btn = document.getElementById(`timing-btn-${t}`);
-                if (t === timing) {
-                    btn.className = "px-2.5 py-1 rounded-lg text-[10px] font-bold bg-gold text-slate-950 transition";
-                } else {
-                    btn.className = "px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 hover:text-white transition";
-                }
-            });
-            filterCheatSheet();
-        }
-
-        function filterCheatSheet() {
-            const query = document.getElementById('cheat-search').value.toLowerCase();
-            const container = document.getElementById('cheat-list-container');
-            container.innerHTML = '';
-
-            if (currentCheatTab === 'heroes') {
-                const filtered = heroes.filter(h => {
-                    const matchesQuery = h[0].toLowerCase().includes(query) || h[5].toLowerCase().includes(query) || h[3].toLowerCase().includes(query);
-                    const matchesRole = (currentRoleFilter === 'All' || h[1] === currentRoleFilter);
-                    const matchesTiming = (currentTimingFilter === 'All' || h[2] === currentTimingFilter);
-                    return matchesQuery && matchesRole && matchesTiming;
-                });
-
-                document.getElementById('hero-count-badge').innerText = `${filtered.length} Heroes`;
-
-                filtered.forEach(h => {
-                    container.innerHTML += `
-                        <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800 flex items-start space-x-3">
-                            <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 overflow-hidden flex items-center justify-center shrink-0 border border-indigo-500/30 shadow-md">
-                                <span class="text-white font-black text-sm">${h[0].charAt(0)}</span>
-                            </div>
-                            <div class="flex-1 space-y-1">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-extrabold text-white text-xs">${h[0]}</span>
-                                    <div class="flex space-x-1">
-                                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-md font-semibold">${h[1]}</span>
-                                        <span class="text-[9px] bg-gold/20 text-gold px-2 py-0.5 rounded-md font-semibold">${h[2]} Game</span>
-                                    </div>
-                                </div>
-                                <p class="text-[11px] text-indigo-200 font-medium">Signature: ${h[3]}</p>
-                                <p class="text-[11px] text-slate-300">${h[4]}</p>
-                                <div class="text-[10px] text-slate-400 pt-0.5">Role: ${h[5]}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-            } else {
-                const filtered = jargon.filter(j => j[0].toLowerCase().includes(query) || j[1].toLowerCase().includes(query));
-                filtered.forEach(j => {
-                    container.innerHTML += `
-                        <div class="bg-slate-900/70 p-3 rounded-xl border border-slate-800 space-y-1">
-                            <span class="font-extrabold text-indigo-300 text-xs block">${j[0]}</span>
-                            <p class="text-[11px] text-slate-300">${j[1]}</p>
-                        </div>
-                    `;
-                });
-            }
-        }
-
-        function handleChatKeyPress(e) { if (e.key === 'Enter') sendChatMessage(); }
-        function sendChatMessage() {
-            const input = document.getElementById('chat-input');
-            const query = input.value.trim();
-            if (!query) return;
-            const chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML += `<div class="flex justify-end"><div class="bg-indigo-600 text-white p-2.5 rounded-xl max-w-[85%] text-xs shadow-md">${query}</div></div>`;
-            input.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            setTimeout(() => {
-                chatMessages.innerHTML += `<div class="flex justify-start"><div class="bg-slate-900 border border-slate-800 text-slate-200 p-3 rounded-xl max-w-[85%] text-xs shadow-md space-y-1"><span class="font-bold text-indigo-400 block text-[10px]">ELIF AI Assistant (v1.05)</span><p>In MLBB tactical gameplay, role synergy and timing control win championships!</p></div></div>`;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 600);
-        }
-
-        window.onload = function() { filterCheatSheet(); };
+        // Initialize on load
+        window.onload = function() {
+            updateView();
+        };
     </script>
 </body>
 </html>
